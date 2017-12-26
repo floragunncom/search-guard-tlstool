@@ -1,0 +1,37 @@
+ca:
+   root:
+      keysize: 2048
+      dn: CN=root.ca.example.com,OU=CA,O=Example Com\, Inc.,DC=example,DC=com
+      validityDays: 3650
+   intermediate:
+      keysize: 2048
+      dn: CN=signing.ca.example.com,OU=CA,O=Example Com\, Inc.,DC=example,DC=com
+      validityDays: 3650
+      defaultValidityDays: 730
+      crlDistributionPoints: URI:https://raw.githubusercontent.com/floragunncom/unittest-assets/master/revoked.crl
+
+nodes:
+  - name: node1
+    dn: CN=node1.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
+    dns: node1.example.com
+    ip: 10.0.2.1
+    oid: 2.999.1.2.3.1
+  - name: node2
+    dn: CN=node2.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
+    dns: 
+      - node2.example.com"
+      - es2.example.com
+    ip: 
+      - 10.0.2.1
+      - 192.168.2.1
+    oid: 2.999.1.2.3.2
+  - name: node3
+    dn: CN=node3.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
+    dns: node3.example.com
+    
+clients:
+  - name: spock
+    dn: CN=spock.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
+  - name: kirk
+    dn: CN=kirk.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
+  
