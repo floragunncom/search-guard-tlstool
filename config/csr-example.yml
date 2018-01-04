@@ -1,0 +1,25 @@
+nodes:
+  - name: node1
+    dn: CN=node1.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
+    dns: node1.example.com
+    ip: 10.0.2.1
+    oid: 2.999.1.2.3.1
+  - name: node2
+    dn: CN=node2.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
+    dns: 
+      - node2.example.com"
+      - es2.example.com
+    ip: 
+      - 10.0.2.1
+      - 192.168.2.1
+    oid: 2.999.1.2.3.2
+  - name: node3
+    dn: CN=node3.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
+    dns: node3.example.com
+    
+clients:
+  - name: spock
+    dn: CN=spock.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
+  - name: kirk
+    dn: CN=kirk.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
+  

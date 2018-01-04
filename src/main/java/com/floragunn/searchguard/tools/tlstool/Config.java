@@ -69,6 +69,8 @@ public class Config {
 			private int validityDays = 36500;
 			private int defaultValidityDays = 730;
 			private List<String> crlDistributionPoints;
+			private String file;
+			
 			public int getKeysize() {
 				return keysize;
 			}
@@ -99,6 +101,12 @@ public class Config {
 			public void setCrlDistributionPoints(List<String> crlDistributionPoints) {
 				this.crlDistributionPoints = crlDistributionPoints;
 			}
+			public String getFile() {
+				return file;
+			}
+			public void setFile(String file) {
+				this.file = file;
+			}
 			
 			
 		}
@@ -112,6 +120,7 @@ public class Config {
 		private List<String> dns;
 		private List<String> ip;
 		private List<String> oid;
+		private int keysize = 2048;
 		
 		public String getName() {
 			return name;
@@ -144,12 +153,19 @@ public class Config {
 		public void setOid(List<String> oid) {
 			this.oid = oid;
 		}
+		public int getKeysize() {
+			return keysize;
+		}
+		public void setKeysize(int keysize) {
+			this.keysize = keysize;
+		}
 	}
 	
 	public static class Client {
 		private String name;
 		private String dn;
-		
+		private int keysize = 2048;
+
 		public String getName() {
 			return name;
 		}
@@ -161,6 +177,12 @@ public class Config {
 		}
 		public void setDn(String dn) {
 			this.dn = dn;
+		}
+		public int getKeysize() {
+			return keysize;
+		}
+		public void setKeysize(int keysize) {
+			this.keysize = keysize;
 		}
 	}
 }

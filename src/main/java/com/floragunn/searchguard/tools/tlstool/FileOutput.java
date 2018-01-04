@@ -17,16 +17,21 @@ import org.bouncycastle.util.io.pem.PemGenerationException;
 import org.bouncycastle.util.io.pem.PemObject;
 
 
-class FileOutput {
+public class FileOutput {
 	private List<FileEntry> fileEntries = new ArrayList<>();
 
-	void add(String fileName, Object ...entries) {
-		fileEntries.add(new FileEntry(fileName, entries));
+	public void add(String fileName, Object ...entries) {
+		fileEntries.add(new FileEntry(new File(fileName), entries));
 	}
+
+	public void add(File file, Object ...entries) {
+		fileEntries.add(new FileEntry(file, entries));
+	}
+
 	
-	void saveAllFiles(char [] password) throws ToolException {
+	public void saveAllFiles(char [] password) throws ToolException {
 		for (FileEntry fileEntry : fileEntries) {
-			try (JcaPEMWriter writer = new JcaPEMWriter(new FileWriter(new File(fileEntry.getName())))) {
+			try (JcaPEMWriter writer = new JcaPEMWriter(new FileWriter(fileEntry.getFile()))) {
 				for (Object object : fileEntry.getEntries()) {
 					if (object instanceof PrivateKey && password != null) {
 						object = createEncryptedPem((PrivateKey) object, password);
@@ -35,7 +40,7 @@ class FileOutput {
 					writer.writeObject(object);
 				}
 			} catch (Exception e) {
-				throw new ToolException("Error while writing " + fileEntry.getName() + ": " + e.getMessage(), e);
+				throw new ToolException("Error while writing " + fileEntry.getFile() + ": " + e.getMessage(), e);
 			}
 		}
 	}
@@ -50,20 +55,21 @@ class FileOutput {
 	}
 	
 	static class FileEntry {
-		private final String name;
+		private final File file;
 		private final List<Object> entries;
 		
-		FileEntry(String name, Object... entries) {
-			this.name = name;
+		FileEntry(File file, Object... entries) {
+			this.file = file;
 			this.entries = Arrays.asList(entries);
-		}
-
-		public String getName() {
-			return name;
 		}
 
 		public List<Object> getEntries() {
 			return entries;
+		}
+
+
+		public File getFile() {
+			return file;
 		}
 		
 	}
