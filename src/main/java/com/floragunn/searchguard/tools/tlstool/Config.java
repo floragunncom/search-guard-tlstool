@@ -4,12 +4,33 @@ import java.util.List;
 
 public class Config {
 	
-	public final static Config DEFAULT = new Config();
+	public static final String DEFAULT_OID = "1.2.3.4.5.5";
 	
 	private Ca ca;
 	private List<Node> nodes;
 	private List<Client> clients;
+	private String target;
+	private String elasticSearchTarget;
+	private Defaults defaults;
 	
+	public String getElasticSearchTarget() {
+		return elasticSearchTarget;
+	}
+
+
+	public void setElasticSearchTarget(String elasticSearchTarget) {
+		this.elasticSearchTarget = elasticSearchTarget;
+	}
+
+	public String getTarget() {
+		return target;
+	}
+
+
+	public void setTarget(String target) {
+		this.target = target;
+	}
+
 	public Ca getCa() {
 		return ca;
 	}
@@ -39,7 +60,91 @@ public class Config {
 	public void setClients(List<Client> clients) {
 		this.clients = clients;
 	}
+	
+	public Defaults getDefaults() {
+		return defaults;
+	}
 
+
+	public void setDefaults(Defaults defaults) {
+		this.defaults = defaults;
+	}
+	
+	public void applyDefaults() {
+		if (defaults == null) {
+			defaults = new Defaults();
+		}
+		
+		if (ca != null) {
+			ca.applyDefaults(defaults);
+		}
+		
+		if (nodes != null) {
+			for (Node node : nodes) {
+				node.applyDefaults(defaults);
+			}
+		}
+		
+		if (clients != null) {
+			for (Client client : clients) {
+				client.applyDefaults(defaults);
+			}
+		}
+	}
+	
+	
+	public static class Defaults {
+		private String pkPassword;
+		private int validityDays = 730;
+		private int keysize = 2048;
+		private String nodeOid = DEFAULT_OID;
+		private List<String> nodesDn; 
+		private int generatedPasswordLength = 12;
+		private boolean httpEnabled;
+		
+		public String getPkPassword() {
+			return pkPassword;
+		}
+		public void setPkPassword(String pkPassword) {
+			this.pkPassword = pkPassword;
+		}
+		public int getValidityDays() {
+			return validityDays;
+		}
+		public void setValidityDays(int validityDays) {
+			this.validityDays = validityDays;
+		}
+		public int getKeysize() {
+			return keysize;
+		}
+		public void setKeysize(int keysize) {
+			this.keysize = keysize;
+		}
+		public String getNodeOid() {
+			return nodeOid;
+		}
+		public void setNodeOid(String nodeOid) {
+			this.nodeOid = nodeOid;
+		}
+		public int getGeneratedPasswordLength() {
+			return generatedPasswordLength;
+		}
+		public void setGeneratedPasswordLength(int generatedPasswordLength) {
+			this.generatedPasswordLength = generatedPasswordLength;
+		}
+		public List<String> getNodesDn() {
+			return nodesDn;
+		}
+		public void setNodesDn(List<String> nodesDn) {
+			this.nodesDn = nodesDn;
+		}
+		public boolean isHttpEnabled() {
+			return httpEnabled;
+		}
+		public void setHttpEnabled(boolean httpEnabled) {
+			this.httpEnabled = httpEnabled;
+		}
+	}
 
 
 	public static class Ca {
@@ -62,19 +167,38 @@ public class Config {
 		public void setIntermediate(Certificate intermediate) {
 			this.intermediate = intermediate;
 		}
+		
+
+		public void applyDefaults(Defaults defaults) {
+			if (root != null) {
+				root.applyDefaults(defaults);
+			}
+			
+			if (intermediate != null) {
+				intermediate.applyDefaults(defaults);
+			}
+			
+		}
 
 		public static class Certificate {
-			private int keysize = 2048;
+			private Integer keysize = null;
 			private String dn;
-			private int validityDays = 36500;
-			private int defaultValidityDays = 730;
+			private Integer validityDays = null;
 			private List<String> crlDistributionPoints;
 			private String file;
+			private String pkPassword;
 			
-			public int getKeysize() {
+			public String getPkPassword() {
+				return pkPassword;
+			}
+
+			public void setPkPassword(String password) {
+				this.pkPassword = password;
+			}
+			public Integer getKeysize() {
 				return keysize;
 			}
-			public void setKeysize(int keysize) {
+			public void setKeysize(Integer keysize) {
 				this.keysize = keysize;
 			}
 			public String getDn() {
@@ -83,18 +207,13 @@ public class Config {
 			public void setDn(String dn) {
 				this.dn = dn;
 			}
-			public int getValidityDays() {
+			public Integer getValidityDays() {
 				return validityDays;
 			}
-			public void setValidityDays(int validityDays) {
+			public void setValidityDays(Integer validityDays) {
 				this.validityDays = validityDays;
 			}
-			public int getDefaultValidityDays() {
-				return defaultValidityDays;
-			}
-			public void setDefaultValidityDays(int defaultValidityDays) {
-				this.defaultValidityDays = defaultValidityDays;
-			}
+	
 			public List<String> getCrlDistributionPoints() {
 				return crlDistributionPoints;
 			}
@@ -108,7 +227,20 @@ public class Config {
 				this.file = file;
 			}
 			
-			
+			public void applyDefaults(Defaults defaults) {
+				if (keysize == null) {
+					keysize = defaults.getKeysize();
+				}
+				
+				if (validityDays == null) {
+					validityDays = defaults.getValidityDays();
+				}
+				
+				if (pkPassword == null) {
+					pkPassword = defaults.getPkPassword();
+				}
+				
+			}
 		}
 	}
 	
@@ -120,11 +252,14 @@ public class Config {
 		private List<String> dns;
 		private List<String> ip;
 		private List<String> oid;
-		private int keysize = 2048;
+		private Integer keysize;
+		private String pkPassword;
+		private Integer validityDays;
 		
 		public String getName() {
 			return name;
 		}
+
 		public void setName(String name) {
 			this.name = name;
 		}
@@ -153,22 +288,57 @@ public class Config {
 		public void setOid(List<String> oid) {
 			this.oid = oid;
 		}
-		public int getKeysize() {
+		public Integer getKeysize() {
 			return keysize;
 		}
-		public void setKeysize(int keysize) {
+		public void setKeysize(Integer keysize) {
 			this.keysize = keysize;
 		}
+
+		public String getPkPassword() {
+			return pkPassword;
+		}
+
+		public void setPkPassword(String pkPassword) {
+			this.pkPassword = pkPassword;
+		}
+		
+		public Integer getValidityDays() {
+			return validityDays;
+		}
+
+		public void setValidityDays(Integer validityDays) {
+			this.validityDays = validityDays;
+		}
+		
+		public void applyDefaults(Defaults defaults) {
+			if (keysize == null) {
+				keysize = defaults.getKeysize();
+			}
+			
+			if (pkPassword == null) {
+				pkPassword = defaults.getPkPassword();
+			}
+			
+			if (validityDays == null) {
+				validityDays = defaults.getValidityDays();
+			}
+		}
+		
 	}
 	
 	public static class Client {
 		private String name;
 		private String dn;
-		private int keysize = 2048;
+		private Integer keysize;
+		private String pkPassword;
+		private boolean admin;
+		private Integer validityDays;
 
 		public String getName() {
 			return name;
 		}
+	
 		public void setName(String name) {
 			this.name = name;
 		}
@@ -178,11 +348,55 @@ public class Config {
 		public void setDn(String dn) {
 			this.dn = dn;
 		}
-		public int getKeysize() {
+		public Integer getKeysize() {
 			return keysize;
 		}
-		public void setKeysize(int keysize) {
+		public void setKeysize(Integer keysize) {
 			this.keysize = keysize;
 		}
+
+		public String getPkPassword() {
+			return pkPassword;
+		}
+
+		public void setPkPassword(String pkPassword) {
+			this.pkPassword = pkPassword;
+		}
+		
+		public boolean isAdmin() {
+			return admin;
+		}
+
+		public void setAdmin(boolean admin) {
+			this.admin = admin;
+		}
+
+		public Integer getValidityDays() {
+			return validityDays;
+		}
+
+		public void setValidityDays(Integer validityDays) {
+			this.validityDays = validityDays;
+		}
+		
+		public void applyDefaults(Defaults defaults) {
+			if (keysize == null) {
+				keysize = defaults.getKeysize();
+			}
+			
+			if (pkPassword == null) {
+				pkPassword = defaults.getPkPassword();
+			}		
+			
+			if (validityDays == null) {
+				validityDays = defaults.getValidityDays();
+			}
+		}
+
+
 	}
+
+
+
+
 }

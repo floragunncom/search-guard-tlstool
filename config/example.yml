@@ -7,9 +7,30 @@ ca:
       keysize: 2048
       dn: CN=signing.ca.example.com,OU=CA,O=Example Com\, Inc.,DC=example,DC=com
       validityDays: 3650
-      defaultValidityDays: 730
       crlDistributionPoints: URI:https://raw.githubusercontent.com/floragunncom/unittest-assets/master/revoked.crl
-
+      
+defaults:
+      validityDays: 3650 
+      
+      # Password for private key
+      #   Possible values: 
+      #   - auto: automatically generated password, returned in config output; 
+      #   - none: unencrypted private key; 
+      #   - other values: other values are used directly as password   
+      pkPassword: auto      
+      
+      nodesDn:
+      - "CN=*.example.com,OU=Ops,O=Example Com\\, Inc.,DC=example,DC=com"
+      # - 'CN=node.other.com,OU=SSL,O=Test,L=Test,C=DE'
+      # - 'CN=*.example.com,OU=SSL,O=Test,L=Test,C=DE'
+      # - 'CN=elk-devcluster*'
+      # - '/CN=.*regex/' 
+      nodeOid: 1.2.3.4.5.5
+      
+      generatedPasswordLength: 12
+      
+      httpEnabled: true
+      
 nodes:
   - name: node1
     dn: CN=node1.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
@@ -19,7 +40,7 @@ nodes:
   - name: node2
     dn: CN=node2.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
     dns: 
-      - node2.example.com"
+      - node2.example.com
       - es2.example.com
     ip: 
       - 10.0.2.1
@@ -34,4 +55,5 @@ clients:
     dn: CN=spock.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
   - name: kirk
     dn: CN=kirk.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
-  
+    admin: true
+ 
