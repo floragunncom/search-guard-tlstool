@@ -2,18 +2,8 @@ package com.floragunn.searchguard.tools.tlstool.tasks;
 
 import java.io.File;
 import java.security.KeyPair;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.BasicConstraints;
@@ -29,15 +19,9 @@ import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.floragunn.searchguard.support.WildcardMatcher;
 import com.floragunn.searchguard.tools.tlstool.Config;
 import com.floragunn.searchguard.tools.tlstool.Context;
-import com.floragunn.searchguard.tools.tlstool.ResultConfig;
 import com.floragunn.searchguard.tools.tlstool.ToolException;
-import com.google.common.base.Strings;
 
 public class CreateNodeCertificate extends CreateNodeCertificateBase {
 
@@ -55,12 +39,13 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 
 	@Override
 	public void run() throws ToolException {
-		privateKeyFile = new File(getNodeFileName(nodeConfig) + ".key");
-		certificateFile = new File(getNodeFileName(nodeConfig) + ".pem");
-		httpPrivateKeyFile = new File(getNodeFileName(nodeConfig) + "_http.key");
-		httpCertificateFile = new File(getNodeFileName(nodeConfig) + "_http.pem");
+		privateKeyFile = new File(ctx.getTargetDirectory(), getNodeFileName(nodeConfig) + ".key");
+		certificateFile = new File(ctx.getTargetDirectory(), getNodeFileName(nodeConfig) + ".pem");
+		httpPrivateKeyFile = new File(ctx.getTargetDirectory(), getNodeFileName(nodeConfig) + "_http.key");
+		httpCertificateFile = new File(ctx.getTargetDirectory(), getNodeFileName(nodeConfig) + "_http.pem");
 
-		configSnippetFile = new File(getNodeFileName(nodeConfig) + "_elasticsearch_config_snippet.yml");
+		configSnippetFile = new File(ctx.getTargetDirectory(),
+				getNodeFileName(nodeConfig) + "_elasticsearch_config_snippet.yml");
 
 		if (!checkFileOverwrite("certificate", nodeConfig.getDn(), privateKeyFile, certificateFile, httpPrivateKeyFile,
 				httpCertificateFile)) {
@@ -130,11 +115,6 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 	private void createRestCertificate() throws ToolException {
 
 		try {
-			if (httpPrivateKeyFile.exists() || httpCertificateFile.exists()) {
-				// TODO logging
-				return;
-			}
-
 			KeyPair nodeKeyPair = generateKeyPair(nodeConfig.getKeysize());
 
 			SubjectPublicKeyInfo subPubKeyInfo = ctx.getSigningCertificate().getSubjectPublicKeyInfo();

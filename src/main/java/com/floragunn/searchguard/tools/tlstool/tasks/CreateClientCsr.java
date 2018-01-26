@@ -6,8 +6,6 @@ import java.security.KeyPair;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.ExtensionsGenerator;
@@ -35,9 +33,9 @@ public class CreateClientCsr extends CreateClientCertificateBase {
 	@Override
 	public void run() throws ToolException {
 		try {
-			File privateKeyFile = new File(getClientFileName(clientConfig) + ".key");
-			File csrFile = new File(getClientFileName(clientConfig) + ".csr");
-			File readmeFile = new File("client-csr.readme");
+			File privateKeyFile = new File(ctx.getTargetDirectory(), getClientFileName(clientConfig) + ".key");
+			File csrFile = new File(ctx.getTargetDirectory(), getClientFileName(clientConfig) + ".csr");
+			File readmeFile = new File(ctx.getTargetDirectory(), "client-csr.readme");
 
 			if (!checkFileOverwrite("csr", clientConfig.getDn(), privateKeyFile, csrFile)) {
 				return;

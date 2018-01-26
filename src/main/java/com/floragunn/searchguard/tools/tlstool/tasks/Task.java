@@ -87,8 +87,12 @@ public abstract class Task {
 	protected boolean checkFileOverwrite(String artifact, String dn, File... files) {
 		for (File file : files) {
 			if (file.exists()) {
-				log.info(file + " does already exist. Skipping creation of " + artifact + " for " + dn);
-				return false;
+				if (!ctx.isOverwrite()) {
+					log.info(file + " does already exist. Skipping creation of " + artifact + " for " + dn);
+					return false;
+				} else {
+					log.debug("Overwriting " + file);
+				}
 			}
 		}
 
@@ -148,6 +152,18 @@ public abstract class Task {
 		}
 	}
 
+	protected <E> E readObjectFromPem(File file, Class<E> expectedType, String password) throws ToolException {
+		try {
+			if ("auto".equalsIgnoreCase(password) || "none".equalsIgnoreCase(password)) {
+				password = null;
+			}
+ 			
+			return readObjectFromPem(file, new FileReader(file), expectedType, password);
+		} catch (FileNotFoundException e) {
+			throw new ToolException("File does not exist: " + file);
+		}
+	}
+
 	protected <E> E readObjectFromPem(File file, Reader reader, Class<E> expectedType) throws ToolException {
 		return readObjectFromPem(file, reader, expectedType, null);
 	}
@@ -180,6 +196,11 @@ public abstract class Task {
 			throws IOException, OperatorCreationException, PKCSException, ToolException {
 		if (expectedType.equals(PrivateKey.class)) {
 			if (object instanceof PEMEncryptedKeyPair) {
+				if (Strings.isNullOrEmpty(password)) {
+					throw new ToolException("File " + file
+							+ " is encrypted but no password is given. Please specify a password in the configuration file.");
+				}
+
 				try {
 					PEMKeyPair keyPair = ((PEMEncryptedKeyPair) object)
 							.decryptKeyPair(new JcePEMDecryptorProviderBuilder().build(password.toCharArray()));
@@ -191,6 +212,11 @@ public abstract class Task {
 			} else if (object instanceof PEMKeyPair) {
 				return privateKeyInfoToPrivateKey(((PEMKeyPair) object).getPrivateKeyInfo());
 			} else if (object instanceof PKCS8EncryptedPrivateKeyInfo) {
+				if (Strings.isNullOrEmpty(password)) {
+					throw new ToolException("File " + file
+							+ " is encrypted but no password is given. Please specify a password in the configuration file.");
+				}
+				
 				try {
 					PrivateKeyInfo privateKeyInfo = ((PKCS8EncryptedPrivateKeyInfo) object).decryptPrivateKeyInfo(
 							new JceOpenSSLPKCS8DecryptorProviderBuilder().build(password.toCharArray()));
@@ -214,10 +240,10 @@ public abstract class Task {
 
 	protected File getConfiguredFile(String configValue, String defaultValue, String extension) {
 		if (configValue == null) {
-			return new File(defaultValue);
+			return new File(ctx.getTargetDirectory(), defaultValue);
 		}
 
-		return new File(FilenameUtils.removeExtension(configValue) + "." + extension);
+		return new File(ctx.getTargetDirectory(), FilenameUtils.removeExtension(configValue) + "." + extension);
 	}
 
 	protected String getSimpleNameFromDn(String dnString) {

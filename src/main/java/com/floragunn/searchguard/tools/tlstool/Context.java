@@ -10,8 +10,9 @@ import org.bouncycastle.cert.X509CertificateHolder;
 
 public class Context {
 	private Provider securityProvider;
-	private final FileOutput fileOutput = new FileOutput();
+	private final FileOutput fileOutput = new FileOutput(this);
 
+	private File targetDirectory;
 	private X509CertificateHolder rootCaCertificate;
 	private X509CertificateHolder signingCertificate;
 	private File rootCaFile;
@@ -19,6 +20,7 @@ public class Context {
 	private long idCounter = System.currentTimeMillis();
 	private Config config;
 	private final SecureRandom secureRandom = new SecureRandom();
+	private boolean overwrite;
 
 	public Provider getSecurityProvider() {
 		return securityProvider;
@@ -78,6 +80,22 @@ public class Context {
 
 	public void setRootCaFile(File rootCaFile) {
 		this.rootCaFile = rootCaFile;
+	}
+
+	public File getTargetDirectory() {
+		return targetDirectory;
+	}
+
+	public void setTargetDirectory(File targetDirectory) {
+		this.targetDirectory = targetDirectory;
+	}
+
+	public boolean isOverwrite() {
+		return overwrite;
+	}
+
+	public void setOverwrite(boolean overwrite) {
+		this.overwrite = overwrite;
 	}
 
 }

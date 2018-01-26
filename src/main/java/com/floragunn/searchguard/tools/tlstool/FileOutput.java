@@ -20,11 +20,18 @@ import org.bouncycastle.operator.OutputEncryptor;
 import org.bouncycastle.util.io.pem.PemGenerationException;
 import org.bouncycastle.util.io.pem.PemObject;
 
+import com.google.common.base.Ascii;
+
 public class FileOutput {
 	private static final Logger log = LogManager.getLogger(FileOutput.class);
 
 	private Map<File, FileEntry> fileEntryMap = new HashMap<>();
 	private List<FileEntry> fileEntries = new ArrayList<>();
+	private final Context ctx;
+
+	public FileOutput(Context ctx) {
+		this.ctx = ctx;
+	}
 
 	public void add(String fileName, Object... entries) {
 		add(new File(fileName), null, entries);
@@ -80,8 +87,8 @@ public class FileOutput {
 
 	public void saveAllFiles() throws ToolException {
 		for (FileEntry fileEntry : fileEntries) {
-			log.info("Going to write: " + fileEntry.getFile() + " " + fileEntry.getEntries());
-			
+			log.debug("Going to write: " + fileEntry.getFile() + " " + filterEntriesForLog(fileEntry.getEntries()));
+
 			try (JcaPEMWriter writer = new JcaPEMWriter(new FileWriter(fileEntry.getFile()))) {
 				for (Object object : fileEntry.getEntries()) {
 					if (object instanceof String) {
@@ -100,11 +107,25 @@ public class FileOutput {
 		}
 	}
 
+	private List<Object> filterEntriesForLog(List<Object> entries) {
+		List<Object> result = new ArrayList<Object>(entries.size());
+
+		for (Object object : entries) {
+			if (object instanceof String) {
+				result.add(Ascii.truncate((String) object, 10, "..."));
+			} else {
+				result.add(object);
+			}
+		}
+		
+		return result;
+	}
+
 	private PemObject createEncryptedPem(PrivateKey privateKey, char[] password)
 			throws PemGenerationException, OperatorCreationException {
 		JceOpenSSLPKCS8EncryptorBuilder encryptorBuilder = new JceOpenSSLPKCS8EncryptorBuilder(
 				PKCS8Generator.PBE_SHA1_3DES);
-		// encryptorBuilder.setRandom(EntropySource.); // TODO
+		encryptorBuilder.setRandom(ctx.getSecureRandom());
 		encryptorBuilder.setPasssword(password);
 		OutputEncryptor outputEncryptor = encryptorBuilder.build();
 		PKCS8Generator generator = new PKCS8Generator(PrivateKeyInfo.getInstance(privateKey.getEncoded()),

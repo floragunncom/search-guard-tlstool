@@ -44,7 +44,7 @@ public class LoadCa extends Task {
 		File keyFile = getConfiguredFile(signingCertificateConfig.getFile(), fileNameBase + ".key", "key");
 		File certFile = getConfiguredFile(signingCertificateConfig.getFile(), fileNameBase + ".pem", "pem");
 
-		ctx.setSigningPrivateKey(readObjectFromPem(keyFile, PrivateKey.class));
+		ctx.setSigningPrivateKey(readObjectFromPem(keyFile, PrivateKey.class, signingCertificateConfig.getPkPassword()));
 		ctx.setSigningCertificate(readObjectFromPem(certFile, X509CertificateHolder.class));
 
 		log.info("Using signing certificate: " + certFile.getAbsolutePath());

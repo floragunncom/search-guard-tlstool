@@ -32,7 +32,8 @@ import com.floragunn.searchguard.tools.tlstool.tasks.LoadCa;
 import com.floragunn.searchguard.tools.tlstool.tasks.Task;
 
 /**
- * TODO Criticality TODO Base directory
+ * TODO Criticality 
+ * TODO Benutzerführung/Doku
  * 
  * HTTP Certs: DN gleich wie Transport? Also use transport?
  */
@@ -64,12 +65,11 @@ public class SearchGuardCertTool {
 		options.addOption(
 				Option.builder("csr").longOpt("create-csr").desc("Create certificate signing requests").build());
 
-		options.addOption(Option.builder("pass").hasArg().desc("Private key password").build());
+		options.addOption(Option.builder("validate").desc("Validate certificates and chain").build());
 		options.addOption(Option.builder("config").hasArg().desc("Path to the config file").build());
 		options.addOption(Option.builder("t").longOpt("target").hasArg().desc("Path to the target directory").build());
-		options.addOption(Option.builder("es").longOpt("elastic-search-target").hasArg().desc(
-				"Path to the installation directory of ElasticSearch. Files will be written to the config directory of that installation. Mutually exclusive to --target.")
-				.build());
+		options.addOption(Option.builder("o").longOpt("overwrite").desc("Overwrite existing files").build());
+
 		options.addOption(Option.builder("v").longOpt("verbose").desc("Enable detailed output").build());
 
 		try {
@@ -122,6 +122,20 @@ public class SearchGuardCertTool {
 			Configurator.setRootLevel(Level.DEBUG);
 			Configurator.setLevel("STDOUT", Level.DEBUG);
 		}
+		
+		if (commandLine.hasOption("t")) {
+			File targetDirectory = new File(commandLine.getOptionValue("t"));
+			
+			if (!targetDirectory.exists()) {
+				throw new ToolException("Target directory does not exist: " + targetDirectory);
+			}
+			
+			ctx.setTargetDirectory(targetDirectory);
+		}
+		
+		if (commandLine.hasOption("o")) {
+			ctx.setOverwrite(true);
+		}
 
 		if (commandLine.hasOption("ca")) {
 			tasks.add(new CreateCa(ctx, config.getCa()));
@@ -154,16 +168,14 @@ public class SearchGuardCertTool {
 					tasks.add(new CreateClientCertificate(ctx, clientConfig));
 				}
 			}
-		}
-
+		} 
+		
 		for (Task task : tasks) {
 			log.debug("Executing: " + task);
 			task.run();
 		}
 
 		ctx.getFileOutput().saveAllFiles();
-
-		log.info("Success.");
 
 		if (CreateNodeCertificate.getGeneratedCertificateCount() > 0) {
 			log.info("Created " + CreateNodeCertificate.getGeneratedCertificateCount() + " node certificates.");
@@ -200,6 +212,8 @@ public class SearchGuardCertTool {
 						"Passwords for the private keys of the client certificates have been auto-generated. The passwords are stored in the file \"client-certificates.readme\"");
 			}
 		}
+		
+
 
 	}
 

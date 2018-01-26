@@ -3,12 +3,13 @@ ca:
       keysize: 2048
       dn: CN=root.ca.example.com,OU=CA,O=Example Com\, Inc.,DC=example,DC=com
       validityDays: 3650
+      
    intermediate:
       keysize: 2048
       dn: CN=signing.ca.example.com,OU=CA,O=Example Com\, Inc.,DC=example,DC=com
       validityDays: 3650
       crlDistributionPoints: URI:https://raw.githubusercontent.com/floragunncom/unittest-assets/master/revoked.crl
-      
+
 defaults:
       validityDays: 3650 
       

@@ -21,7 +21,6 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 import com.floragunn.searchguard.tools.tlstool.Config;
 import com.floragunn.searchguard.tools.tlstool.Context;
-import com.floragunn.searchguard.tools.tlstool.SearchGuardCertTool;
 import com.floragunn.searchguard.tools.tlstool.ToolException;
 
 public class CreateCa extends Task {
