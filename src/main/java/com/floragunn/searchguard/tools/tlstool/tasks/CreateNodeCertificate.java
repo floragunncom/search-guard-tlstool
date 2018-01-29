@@ -136,7 +136,7 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 							new KeyUsage(
 									KeyUsage.digitalSignature | KeyUsage.nonRepudiation | KeyUsage.keyEncipherment))
 					.addExtension(Extension.extendedKeyUsage, true,
-							new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_serverAuth }));
+							new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_serverAuth, KeyPurposeId.id_kp_clientAuth }));
 
 			builder.addExtension(Extension.subjectAlternativeName, false,
 					new DERSequence(createSubjectAlternativeNameList(false)));
