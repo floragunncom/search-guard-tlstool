@@ -7,12 +7,13 @@
 #
 ca:
    root:
-      # The distinguished name of this CA. You must specify a distinguished name.   
-      dn: CN=root.ca.example.com,OU=CA,O=Example Com\, Inc.,DC=example,DC=com
+      # The distinguished name of this CA. You must specify a distinguished name.
+      # example: dn: CN=root.ca.example.com,OU=CA,O=Example Com\, Inc.,DC=example,DC=com
+      dn: ...
 
       # The size of the generated key in bits
       keysize: 2048
-
+      
       # The validity of the generated certificate in days from now
       validityDays: 3650
       
@@ -26,21 +27,31 @@ ca:
       # The name of the generated files can be changed here
       file: root-ca.pem
       
+      # If you have a certificate revocation list, you can specify its distribution points here
+      # crlDistributionPoints: URI:https://raw.githubusercontent.com/floragunncom/unittest-assets/master/revoked.crl
+       
    # If you want to use an intermediate certificate as signing certificate,
    # please specify its parameters here. This is optional. If you remove this section,
-   # the root certificate will be used for signing.         
+   # the root certificate will be used for signing.   
    intermediate:
       # The distinguished name of this CA. You must specify a distinguished name.
-      dn: CN=signing.ca.example.com,OU=CA,O=Example Com\, Inc.,DC=example,DC=com
-   
-      # The size of the generated key in bits   
+      # example: dn: CN=root.ca.example.com,OU=CA,O=Example Com\, Inc.,DC=example,DC=com
+      dn: ...
+
+      # The size of the generated key in bits
       keysize: 2048
       
-      # The validity of the generated certificate in days from now      
+      # The validity of the generated certificate in days from now
       validityDays: 3650
       
-      # If you have a certificate revocation list, you can specify its distribution points here      
-      crlDistributionPoints: URI:https://raw.githubusercontent.com/floragunncom/unittest-assets/master/revoked.crl
+      # Password for private key  
+      pkPassword: auto 
+      
+      # The name of the generated files can be changed here
+      file: signing-ca.pem
+      
+      # If you have a certificate revocation list, you can specify its distribution points here
+      # crlDistributionPoints: URI:https://raw.githubusercontent.com/floragunncom/unittest-assets/master/revoked.crl
 
 ### 
 ### Default values and global settings
@@ -56,27 +67,30 @@ defaults:
       #   - none: unencrypted private key; 
       #   - other values: other values are used directly as password   
       pkPassword: auto      
-      
+
       # Specifies to recognize legitimate nodes by the distinguished names
       # of the certificates. This can be a list of DNs, which can contain wildcards.
       # Furthermore, it is possible to specify regular expressions by
       # enclosing the DN in //. 
       # Specification of this is optional. The tool will always include
-      # the DNs of the nodes specified in the nodes section.            
-      nodesDn:
-      - "CN=*.example.com,OU=Ops,O=Example Com\\, Inc.,DC=example,DC=com"
+      # the DNs of the nodes specified in the nodes section.
+      # 
+      # Examples:      
+      # - "CN=*.example.com,OU=Ops,O=Example Com\\, Inc.,DC=example,DC=com"
       # - 'CN=node.other.com,OU=SSL,O=Test,L=Test,C=DE'
       # - 'CN=*.example.com,OU=SSL,O=Test,L=Test,C=DE'
       # - 'CN=elk-devcluster*'
       # - '/CN=.*regex/' 
+
+      # nodesDn:
 
       # If you want to use OIDs to mark legitimate node certificates, 
       # the OID can be included in the certificates by specifying the following
       # attribute
       
       # nodeOid: "1.2.3.4.5.5"
-
-      # The length of auto generated passwords            
+      
+      # The length of auto generated passwords
       generatedPasswordLength: 12
       
       # Set this to true in order to generate config and certificates for 
@@ -93,24 +107,27 @@ defaults:
 ###
 #
 # Specify the nodes of your ES cluster here
-#      
+#
 nodes:
-  - name: node1
-    dn: CN=node1.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
-    dns: node1.example.com
-    ip: 10.0.2.1
-  - name: node2
-    dn: CN=node2.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
-    dns: 
-      - node2.example.com
-      - es2.example.com
-    ip: 
-      - 10.0.2.1
-      - 192.168.2.1
-  - name: node3
-    dn: CN=node3.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
-    dns: node3.example.com
+    # The node name is just used as name of the generated files
+  - name: ... 
 
+    # The distinguished name of this node
+    dn: ...
+ 
+    # DNS names of this node. Several names can be specified as list
+       
+    # dns: 
+    # - node1.example.com
+    # - node1.exampleinc.com
+    
+    # The IP addresses of this node. Several addresses can be specified as list
+    
+    # ip: 10.0.2.1
+    
+    # If you want to override the keysize, pkPassword or validityDays values from
+    # the defaults, just specify them here.
+    
 ###
 ### Clients
 ###
@@ -119,11 +136,17 @@ nodes:
 #
 # At least one client must be an admin user (i.e., a super-user). Admin users can
 # be specified with the attribute admin: true    
-#        
+#    
 clients:
-  - name: spock
-    dn: CN=spock.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
-  - name: kirk
-    dn: CN=kirk.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
-    admin: true
+    # The client name is just used as name of the generated files
+  - name: ...
+  
+    # The distinguished name of the client
+    dn: ...
+    
+    # To mark the client as super-user
+    # admin: true
+    
+    # If you want to override the keysize, pkPassword or validityDays values from
+    # the defaults, just specify them here.    
  

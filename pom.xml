@@ -25,6 +25,7 @@
 		<log4j.version>2.9.1</log4j.version>
 		<jackson.version>2.9.3</jackson.version>
 		<guava.version>23.0</guava.version>
+		<sgtlstool.descriptor>${basedir}/src/main/assemblies/sgtlstool-standalone.xml</sgtlstool.descriptor>
 	</properties>
 
 	<dependencies>
@@ -38,6 +39,7 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>${commons.io.version}</version>
+            <scope>runtime</scope>			
 		</dependency>
 
 		<dependency>
@@ -87,7 +89,6 @@
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 			<version>${log4j.version}</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -98,5 +99,45 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>enterprise</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sgtlstool</id>
+								<phase>package</phase>
+								<configuration>
+									<appendAssemblyId>true</appendAssemblyId>
+									<outputDirectory>${project.build.directory}/releases/</outputDirectory>
+									<descriptors>
+										<descriptor>${sgtlstool.descriptor}</descriptor>
+									</descriptors>
+								</configuration>
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

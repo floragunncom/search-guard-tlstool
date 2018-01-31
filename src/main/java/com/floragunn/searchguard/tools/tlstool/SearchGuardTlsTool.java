@@ -30,25 +30,22 @@ import com.floragunn.searchguard.tools.tlstool.tasks.CreateNodeCertificate;
 import com.floragunn.searchguard.tools.tlstool.tasks.CreateNodeCsr;
 import com.floragunn.searchguard.tools.tlstool.tasks.LoadCa;
 import com.floragunn.searchguard.tools.tlstool.tasks.Task;
+import com.floragunn.searchguard.tools.tlstool.tasks.Validate;
+import com.google.common.base.Strings;
 
-/**
- * TODO Criticality 
- * TODO Benutzerführung/Doku
- * 
- * HTTP Certs: DN gleich wie Transport? Also use transport?
- */
-public class SearchGuardCertTool {
+public class SearchGuardTlsTool {
 
 	private static final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
 	private static final Provider securityProvider = new BouncyCastleProvider();
-	private static final Logger log = LogManager.getLogger(SearchGuardCertTool.class);
+	private static final Logger log = LogManager.getLogger(SearchGuardTlsTool.class);
+	private static Options options;
 
 	public static void main(String[] args) {
 		Security.addProvider(securityProvider);
 		objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
 
 		try {
-			new SearchGuardCertTool(parseOptions(args)).run();
+			new SearchGuardTlsTool(parseOptions(args)).run();
 		} catch (ToolException e) {
 			log.error(e.getMessage());
 			log.info("No files have been written");
@@ -58,19 +55,20 @@ public class SearchGuardCertTool {
 	}
 
 	private static CommandLine parseOptions(String[] args) {
-		Options options = new Options();
+		options = new Options();
 		options.addOption(Option.builder("ca").longOpt("create-ca").desc("Create a new certificate authority").build());
 		options.addOption(Option.builder("crt").longOpt("create-cert")
 				.desc("Create certificates using an existing or newly created local certificate authority").build());
 		options.addOption(
 				Option.builder("csr").longOpt("create-csr").desc("Create certificate signing requests").build());
 
-		options.addOption(Option.builder("validate").desc("Validate certificates and chain").build());
-		options.addOption(Option.builder("config").hasArg().desc("Path to the config file").build());
+		options.addOption(Option.builder("c").longOpt("config").hasArg().desc("Path to the config file").build());
 		options.addOption(Option.builder("t").longOpt("target").hasArg().desc("Path to the target directory").build());
 		options.addOption(Option.builder("o").longOpt("overwrite").desc("Overwrite existing files").build());
 
 		options.addOption(Option.builder("v").longOpt("verbose").desc("Enable detailed output").build());
+		options.addOption(Option.builder("f").longOpt("force")
+				.desc("Force certificate generation despite of validation errors").build());
 
 		try {
 
@@ -87,13 +85,20 @@ public class SearchGuardCertTool {
 
 	private CommandLine commandLine;
 
-	SearchGuardCertTool(CommandLine commandLine) {
+	SearchGuardTlsTool(CommandLine commandLine) {
 		this.commandLine = commandLine;
 	}
 
 	private Config getConfig() throws ToolException {
 		try {
-			File configFile = new File(commandLine.getOptionValue("config", "config/example.yml"));
+			String configOptionValue = commandLine.getOptionValue("config");
+
+			if (Strings.isNullOrEmpty(configOptionValue)) {
+				throw new ToolException(
+						"No config specified. In order to use this tool, you always need to specify a config file using the -c option. To create a config file, copy the file config/template.yml and edit it to match your needs.");
+			}
+
+			File configFile = new File(configOptionValue);
 
 			if (!configFile.exists()) {
 				throw new ToolException("Config file does not exist: " + configFile);
@@ -110,6 +115,19 @@ public class SearchGuardCertTool {
 	}
 
 	private void run() throws ToolException {
+		if (!commandLine.hasOption("ca") && !commandLine.hasOption("crt") && !commandLine.hasOption("csr")) {
+			System.out.println(
+					"In order to use sgtlstool, you have to use at least one of these parameters:\n\n--create-ca - Creates a new CA\n--create-cert - Creates new certificates\n--create-crt - Creates certificate signing requests.\n");
+
+			if (!commandLine.hasOption("c")) {
+				System.out.println(
+						"Furthermore, you need to specify a config file using the -c option. To create a config file, copy the file config/template.yml and edit it to match your needs.\n");
+			}
+			new HelpFormatter().printHelp("sgtlstool.sh", options, true);
+
+			System.exit(1);
+		}
+
 		Config config = getConfig();
 
 		Context ctx = new Context();
@@ -122,24 +140,30 @@ public class SearchGuardCertTool {
 			Configurator.setRootLevel(Level.DEBUG);
 			Configurator.setLevel("STDOUT", Level.DEBUG);
 		}
-		
-		if (commandLine.hasOption("t")) {
-			File targetDirectory = new File(commandLine.getOptionValue("t"));
-			
-			if (!targetDirectory.exists()) {
-				throw new ToolException("Target directory does not exist: " + targetDirectory);
-			}
-			
-			ctx.setTargetDirectory(targetDirectory);
+
+		File targetDirectory = new File(commandLine.getOptionValue("t", "out"));
+
+		if (!targetDirectory.exists() && commandLine.getOptionValue("t") == null) {
+			targetDirectory.mkdir();
 		}
-		
+
+		if (!targetDirectory.exists()) {
+			throw new ToolException("Target directory does not exist: " + targetDirectory);
+		}
+
+		ctx.setTargetDirectory(targetDirectory);
+
 		if (commandLine.hasOption("o")) {
 			ctx.setOverwrite(true);
 		}
 
+		if (!commandLine.hasOption("f")) {
+			tasks.add(new Validate(ctx));
+		}
+
 		if (commandLine.hasOption("ca")) {
 			tasks.add(new CreateCa(ctx, config.getCa()));
-		} else if (commandLine.hasOption("create-cert")) {
+		} else if (commandLine.hasOption("crt")) {
 			tasks.add(new LoadCa(ctx, config.getCa()));
 		}
 
@@ -168,8 +192,8 @@ public class SearchGuardCertTool {
 					tasks.add(new CreateClientCertificate(ctx, clientConfig));
 				}
 			}
-		} 
-		
+		}
+
 		for (Task task : tasks) {
 			log.debug("Executing: " + task);
 			task.run();
@@ -212,8 +236,6 @@ public class SearchGuardCertTool {
 						"Passwords for the private keys of the client certificates have been auto-generated. The passwords are stored in the file \"client-certificates.readme\"");
 			}
 		}
-		
-
 
 	}
 

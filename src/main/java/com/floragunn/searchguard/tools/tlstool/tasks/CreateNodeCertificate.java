@@ -55,10 +55,22 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 		createTransportCertificate();
 
 		if (ctx.getConfig().getDefaults().isHttpEnabled()) {
-			createRestCertificate();
+			if (ctx.getConfig().getDefaults().isReuseTransportCertificatesForHttp()) {
+				addTransportCertificateToConfigAsHttpCertificate();
+			} else {
+				createRestCertificate();
+			}
 		}
 
-		addOutputFile(configSnippetFile, createConfigSnippet());
+		addOutputFile(configSnippetFile, createConfigSnippetComment(), createConfigSnippet());
+	}
+
+	private String createConfigSnippetComment() {
+		return "# This is a configuration snippet for the node " + getNodeFileName(nodeConfig) + "\n"
+				+ "# This snippet needs to be inserted into the file config/elasticsearch.yml of the respective node.\n"
+				+ "# If the config file already contains SearchGuard configuration, this needs to be replaced.\n"
+				+ "# Furthermore, you need to copy the files referenced below into the same directory.\n"
+				+ "# Please refer to http://docs.search-guard.com/latest/configuring-tls for further configuration of your installation.\n\n\n";
 	}
 
 	private void createTransportCertificate() throws ToolException {
@@ -97,10 +109,10 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 			addEncryptedOutputFile(privateKeyFile, privateKeyPassword, nodeKeyPair.getPrivate());
 			addOutputFile(certificateFile, ctx.getSigningCertificate(), nodeCertificate);
 
-			nodeResultConfig.setTransportPemCertFilePath(certificateFile.getPath());
-			nodeResultConfig.setTransportPemKeyFilePath(privateKeyFile.getPath());
+			nodeResultConfig.setTransportPemCertFilePath(certificateFile.getName());
+			nodeResultConfig.setTransportPemKeyFilePath(privateKeyFile.getName());
 			nodeResultConfig.setTransportPemKeyPassword(privateKeyPassword);
-			nodeResultConfig.setTransportPemTrustedCasFilePath(ctx.getRootCaFile().toString());
+			nodeResultConfig.setTransportPemTrustedCasFilePath(ctx.getRootCaFile().getName());
 
 			generatedCertificateCount++;
 
@@ -135,8 +147,8 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 					.addExtension(Extension.keyUsage, true,
 							new KeyUsage(
 									KeyUsage.digitalSignature | KeyUsage.nonRepudiation | KeyUsage.keyEncipherment))
-					.addExtension(Extension.extendedKeyUsage, true,
-							new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_serverAuth, KeyPurposeId.id_kp_clientAuth }));
+					.addExtension(Extension.extendedKeyUsage, true, new ExtendedKeyUsage(
+							new KeyPurposeId[] { KeyPurposeId.id_kp_serverAuth, KeyPurposeId.id_kp_clientAuth }));
 
 			builder.addExtension(Extension.subjectAlternativeName, false,
 					new DERSequence(createSubjectAlternativeNameList(false)));
@@ -149,10 +161,10 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 			addEncryptedOutputFile(httpPrivateKeyFile, privateKeyPassword, nodeKeyPair.getPrivate());
 			addOutputFile(httpCertificateFile, ctx.getSigningCertificate(), nodeCertificate);
 
-			nodeResultConfig.setHttpPemCertFilePath(certificateFile.getPath());
-			nodeResultConfig.setHttpPemKeyFilePath(privateKeyFile.getPath());
+			nodeResultConfig.setHttpPemCertFilePath(httpCertificateFile.getName());
+			nodeResultConfig.setHttpPemKeyFilePath(httpPrivateKeyFile.getName());
 			nodeResultConfig.setHttpPemKeyPassword(privateKeyPassword);
-			nodeResultConfig.setHttpPemTrustedCasFilePath(ctx.getRootCaFile().toString());
+			nodeResultConfig.setHttpPemTrustedCasFilePath(ctx.getRootCaFile().getName());
 
 			generatedCertificateCount++;
 
@@ -163,6 +175,13 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 		} catch (CertIOException | OperatorCreationException e) {
 			throw new ToolException("Error while composing HTTP certificate for " + nodeConfig, e);
 		}
+	}
+
+	private void addTransportCertificateToConfigAsHttpCertificate() {
+		nodeResultConfig.setHttpPemCertFilePath(nodeResultConfig.getTransportPemCertFilePath());
+		nodeResultConfig.setHttpPemKeyFilePath(nodeResultConfig.getTransportPemKeyFilePath());
+		nodeResultConfig.setHttpPemKeyPassword(nodeResultConfig.getTransportPemKeyPassword());
+		nodeResultConfig.setHttpPemTrustedCasFilePath(nodeResultConfig.getTransportPemCertFilePath());
 	}
 
 	public static int getGeneratedCertificateCount() {

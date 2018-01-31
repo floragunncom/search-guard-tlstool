@@ -1,6 +1,5 @@
 package com.floragunn.searchguard.tools.tlstool;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -57,7 +56,7 @@ public class ResultConfig {
 		private String certOid = null;
 
 		@JsonProperty("searchguard.ssl.http.clientauth_mode")
-		private String clientAuthMode = "OPTIONAL";
+		private String clientAuthMode = null;
 		
 		public String getTransportPemCertFilePath() {
 			return transportPemCertFilePath;

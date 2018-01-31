@@ -97,10 +97,11 @@ public class Config {
 		private String pkPassword;
 		private int validityDays = 730;
 		private int keysize = 2048;
-		private String nodeOid = DEFAULT_OID;
+		private String nodeOid = null;
 		private List<String> nodesDn; 
 		private int generatedPasswordLength = 12;
 		private boolean httpEnabled;
+		private boolean reuseTransportCertificatesForHttp;
 		
 		public String getPkPassword() {
 			return pkPassword;
@@ -143,6 +144,12 @@ public class Config {
 		}
 		public void setHttpEnabled(boolean httpEnabled) {
 			this.httpEnabled = httpEnabled;
+		}
+		public boolean isReuseTransportCertificatesForHttp() {
+			return reuseTransportCertificatesForHttp;
+		}
+		public void setReuseTransportCertificatesForHttp(boolean reuseTransportCertificatesForHttp) {
+			this.reuseTransportCertificatesForHttp = reuseTransportCertificatesForHttp;
 		}
 	}
 
