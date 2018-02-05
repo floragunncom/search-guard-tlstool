@@ -68,7 +68,7 @@ public class CreateClientCertificate extends CreateClientCertificateBase {
 							new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_clientAuth }));
 
 			X509CertificateHolder clientCertificate = builder.build(new JcaContentSignerBuilder("SHA1withRSA")
-					.setProvider(ctx.getSecurityProvider()).build(clientKeyPair.getPrivate()));
+					.setProvider(ctx.getSecurityProvider()).build(ctx.getSigningPrivateKey()));
 
 			String privateKeyPassword = getPassword(clientConfig.getPkPassword());
 

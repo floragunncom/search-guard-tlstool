@@ -15,13 +15,13 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.floragunn.searchguard.support.WildcardMatcher;
 import com.floragunn.searchguard.tools.tlstool.Config;
 import com.floragunn.searchguard.tools.tlstool.Context;
-import com.floragunn.searchguard.tools.tlstool.ResultConfig;
 import com.floragunn.searchguard.tools.tlstool.ToolException;
+import com.floragunn.searchguard.tools.util.EsNodeConfig;
 import com.google.common.base.Strings;
 
 public abstract class CreateNodeCertificateBase extends Task {
 	private Config.Node nodeConfig;
-	protected final ResultConfig.Node nodeResultConfig = new ResultConfig.Node();
+	protected final EsNodeConfig nodeResultConfig = new EsNodeConfig();
 	protected File privateKeyFile;
 	protected File configSnippetFile;
 	protected File httpPrivateKeyFile;
