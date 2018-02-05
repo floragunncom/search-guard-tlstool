@@ -72,7 +72,7 @@ public class CreateClientCertificate extends CreateClientCertificateBase {
 
 			String privateKeyPassword = getPassword(clientConfig.getPkPassword());
 
-			addOutputFile(certificateFile, ctx.getSigningCertificate(), clientCertificate);
+			addOutputFile(certificateFile, clientCertificate, ctx.getSigningCertificate());
 			addEncryptedOutputFile(privateKeyFile, privateKeyPassword, clientKeyPair.getPrivate());
 			addOutputFile(readmeFile, createReadme());
 
