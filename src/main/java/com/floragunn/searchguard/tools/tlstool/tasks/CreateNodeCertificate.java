@@ -107,7 +107,7 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 			String privateKeyPassword = getPassword(nodeConfig.getPkPassword());
 
 			addEncryptedOutputFile(privateKeyFile, privateKeyPassword, nodeKeyPair.getPrivate());
-			addOutputFile(certificateFile, ctx.getSigningCertificate(), nodeCertificate);
+			addOutputFile(certificateFile, nodeCertificate, ctx.getSigningCertificate());
 
 			nodeResultConfig.setTransportPemCertFilePath(certificateFile.getName());
 			nodeResultConfig.setTransportPemKeyFilePath(privateKeyFile.getName());
@@ -159,7 +159,7 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 			String privateKeyPassword = getPassword(nodeConfig.getPkPassword());
 
 			addEncryptedOutputFile(httpPrivateKeyFile, privateKeyPassword, nodeKeyPair.getPrivate());
-			addOutputFile(httpCertificateFile, ctx.getSigningCertificate(), nodeCertificate);
+			addOutputFile(httpCertificateFile, nodeCertificate, ctx.getSigningCertificate());
 
 			nodeResultConfig.setHttpPemCertFilePath(httpCertificateFile.getName());
 			nodeResultConfig.setHttpPemKeyFilePath(httpPrivateKeyFile.getName());

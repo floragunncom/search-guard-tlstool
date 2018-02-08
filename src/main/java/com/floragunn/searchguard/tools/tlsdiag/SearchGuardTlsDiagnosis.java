@@ -59,7 +59,6 @@ public class SearchGuardTlsDiagnosis {
 			new SearchGuardTlsDiagnosis(parseOptions(args)).run();
 		} catch (ToolException e) {
 			log.error(e.getMessage());
-			log.info("No files have been written");
 			log.debug("Exception: ", e);
 			System.exit(1);
 		}
@@ -101,7 +100,7 @@ public class SearchGuardTlsDiagnosis {
 		if (commandLine.hasOption("v")) {
 			Configurator.setRootLevel(Level.DEBUG);
 			Configurator.setLevel("STDOUT", Level.DEBUG);
-			
+
 			System.setProperty("java.security.debug", "certpath");
 		}
 

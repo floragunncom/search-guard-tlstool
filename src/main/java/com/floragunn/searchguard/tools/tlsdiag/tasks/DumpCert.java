@@ -28,6 +28,7 @@ import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.x509.extension.X509ExtensionUtil;
 
 import com.floragunn.searchguard.tools.util.PemFileUtils;
+import com.floragunn.searchguard.tools.util.ReverseKeyPurposeIdMap;
 
 public class DumpCert extends Task {
 	private static final Logger log = LogManager.getLogger(ValidateCert.class);
@@ -50,8 +51,8 @@ public class DumpCert extends Task {
 	public void run() {
 
 		try {
-			log.info("\n==============================================\n" + certPemFile
-					+ "\n----------------------------------------------");
+			log.info("\n========================================================================\n" + certPemFile
+					+ "\n------------------------------------------------------------------------");
 			log.debug("PEM Content:\n" + getPemFileSummary(certPemFile));
 
 			certificates = PemFileUtils.readCertificatesFromPemFile(certPemFile);
@@ -63,10 +64,11 @@ public class DumpCert extends Task {
 
 			for (int i = 0; i < certificates.size(); i++) {
 				log.info("Certificate " + (i + 1));
+				log.info("------------------------------------------------------------------------");
 				log.info(getCertSummary(certificates.get(i)));
 				log.debug("\nAll Extensions:");
 				log.debug(getDetailedExtensionList(certificates.get(i)));
-				log.info("----------------------------------------------");
+				log.info("------------------------------------------------------------------------");
 			}
 
 		} catch (Exception e) {
@@ -93,25 +95,26 @@ public class DumpCert extends Task {
 	private String getCertSummary(X509Certificate certificate) {
 		StringBuilder result = new StringBuilder();
 
-		result.append("SHA1 FPR: ").append(getFingerprint(certificate, "SHA1")).append('\n');
-		result.append("MD5 FPR: ").append(getFingerprint(certificate, "MD5")).append('\n');
-		result.append("Subject DN: ").append(certificate.getSubjectDN()).append('\n');
-		result.append("Serial Number: ").append(certificate.getSerialNumber()).append('\n');
-		result.append("Issuer DN: ").append(certificate.getIssuerDN()).append('\n');
-		result.append("Not Before: ").append(certificate.getNotBefore()).append('\n');
-		result.append("Not After: ").append(certificate.getNotAfter()).append('\n');
-		result.append("Key Usage: ").append(getKeyUsageInfo(certificate)).append('\n');
+		result.append("           SHA1 FPR: ").append(getFingerprint(certificate, "SHA1")).append('\n');
+		result.append("            MD5 FPR: ").append(getFingerprint(certificate, "MD5")).append('\n');
+		result.append("         Subject DN: ").append(certificate.getSubjectDN()).append('\n');
+		result.append("      Serial Number: ").append(certificate.getSerialNumber()).append('\n');
+		result.append("          Issuer DN: ").append(certificate.getIssuerDN()).append('\n');
+		result.append("         Not Before: ").append(certificate.getNotBefore()).append('\n');
+		result.append("          Not After: ").append(certificate.getNotAfter()).append('\n');
+		result.append("          Key Usage: ").append(getKeyUsageInfo(certificate)).append('\n');
 		result.append("Signature Algorithm: ").append(certificate.getSigAlgName()).append('\n');
-		result.append("Version: ").append(certificate.getVersion()).append('\n');
+		result.append("            Version: ").append(certificate.getVersion()).append('\n');
 
 		try {
-			result.append("Extended Key Usage: ").append(Strings.join(certificate.getExtendedKeyUsage(), ' '))
+			result.append(" Extended Key Usage: ")
+					.append(Strings.join(ReverseKeyPurposeIdMap.getNamesById(certificate.getExtendedKeyUsage()), ' '))
 					.append('\n');
 		} catch (CertificateParsingException e) {
 			result.append(e.toString()).append('\n');
 		}
-		result.append("Basic Constraints: ").append(certificate.getBasicConstraints()).append('\n');
-		result.append("Subject Alternative Names: ").append(getSubjectAlternativeNameInfo(certificate));
+		result.append("  Basic Constraints: ").append(certificate.getBasicConstraints()).append('\n');
+		result.append("                SAN: ").append(getSubjectAlternativeNameInfo(certificate));
 
 		return result.toString();
 	}
@@ -190,7 +193,8 @@ public class DumpCert extends Task {
 				GeneralName generalName = GeneralName.getInstance(encodable);
 
 				if (generalName.getTagNo() < GENERAL_NAME_TAG_NAMES.length) {
-					result.append("  ").append(GENERAL_NAME_TAG_NAMES[generalName.getTagNo()]).append(": ");
+					result.append("                  ").append(GENERAL_NAME_TAG_NAMES[generalName.getTagNo()])
+							.append(": ");
 				}
 
 				result.append(generalNameValueToString(generalName)).append('\n');
