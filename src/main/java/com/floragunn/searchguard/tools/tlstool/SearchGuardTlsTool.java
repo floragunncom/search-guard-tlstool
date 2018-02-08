@@ -117,7 +117,7 @@ public class SearchGuardTlsTool {
 	private void run() throws ToolException {
 		if (!commandLine.hasOption("ca") && !commandLine.hasOption("crt") && !commandLine.hasOption("csr")) {
 			System.out.println(
-					"In order to use sgtlstool, you have to use at least one of these parameters:\n\n--create-ca - Creates a new CA\n--create-cert - Creates new certificates\n--create-crt - Creates certificate signing requests.\n");
+					"In order to use sgtlstool, you have to use at least one of these parameters:\n\n--create-ca - Creates a new CA\n--create-cert - Creates new certificates\n--create-csr - Creates certificate signing requests.\n");
 
 			if (!commandLine.hasOption("c")) {
 				System.out.println(
