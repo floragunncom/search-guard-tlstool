@@ -38,7 +38,9 @@ ca:
       
       # The validity of the generated certificate in days from now      
       validityDays: 3650
-      
+  
+      pkPassword: auto
+            
       # If you have a certificate revocation list, you can specify its distribution points here      
       crlDistributionPoints: URI:https://raw.githubusercontent.com/floragunncom/unittest-assets/master/revoked.crl
 
