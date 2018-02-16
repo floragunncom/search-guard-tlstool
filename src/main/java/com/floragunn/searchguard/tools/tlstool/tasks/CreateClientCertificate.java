@@ -77,7 +77,7 @@ public class CreateClientCertificate extends CreateClientCertificateBase {
 					extUtils.createAuthorityKeyIdentifier(ctx.getSigningCertificate()))
 					.addExtension(Extension.subjectKeyIdentifier, false,
 							extUtils.createSubjectKeyIdentifier(clientKeyPair.getPublic()))
-					.addExtension(Extension.basicConstraints, true, new BasicConstraints(0))
+					.addExtension(Extension.basicConstraints, true, new BasicConstraints(false))
 					.addExtension(Extension.keyUsage, true,
 							new KeyUsage(
 									KeyUsage.digitalSignature | KeyUsage.nonRepudiation | KeyUsage.keyEncipherment))

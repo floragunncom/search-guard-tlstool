@@ -73,7 +73,7 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 
 		if (ctx.getConfig().getDefaults().isHttpEnabled()) {
 			if (ctx.getConfig().getDefaults().isReuseTransportCertificatesForHttp()) {
-				addTransportCertificateToConfigAsHttpCertificate();				
+				addTransportCertificateToConfigAsHttpCertificate();
 			} else {
 				createRestCertificate();
 			}
@@ -110,7 +110,7 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 					extUtils.createAuthorityKeyIdentifier(ctx.getSigningCertificate()))
 					.addExtension(Extension.subjectKeyIdentifier, false,
 							extUtils.createSubjectKeyIdentifier(nodeKeyPair.getPublic()))
-					.addExtension(Extension.basicConstraints, true, new BasicConstraints(0))
+					.addExtension(Extension.basicConstraints, true, new BasicConstraints(false))
 					.addExtension(Extension.keyUsage, true,
 							new KeyUsage(
 									KeyUsage.digitalSignature | KeyUsage.nonRepudiation | KeyUsage.keyEncipherment))
@@ -162,7 +162,7 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 					extUtils.createAuthorityKeyIdentifier(ctx.getSigningCertificate()))
 					.addExtension(Extension.subjectKeyIdentifier, false,
 							extUtils.createSubjectKeyIdentifier(nodeKeyPair.getPublic()))
-					.addExtension(Extension.basicConstraints, true, new BasicConstraints(0))
+					.addExtension(Extension.basicConstraints, true, new BasicConstraints(false))
 					.addExtension(Extension.keyUsage, true,
 							new KeyUsage(
 									KeyUsage.digitalSignature | KeyUsage.nonRepudiation | KeyUsage.keyEncipherment))
