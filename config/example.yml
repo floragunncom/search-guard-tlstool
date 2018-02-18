@@ -83,10 +83,10 @@ defaults:
       
       # Set this to true in order to generate config and certificates for 
       # the HTTP interface of nodes
-      httpEnabled: true
+      httpsEnabled: true
       
       # Set this to true in order to re-use the node transport certificates
-      # for the HTTP interfaces. Only recognized if httpEnabled is true
+      # for the HTTP interfaces. Only recognized if httpsEnabled is true
       
       # reuseTransportCertificatesForHttp: false
       

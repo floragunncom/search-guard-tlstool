@@ -44,7 +44,7 @@ public class EsNodeConfig {
 	private boolean transportEnforceHostnameVerification = false;
 
 	@JsonProperty("searchguard.ssl.http.enabled")
-	private boolean httpEnabled = true;
+	private boolean httpsEnabled = true;
 
 	@JsonProperty("searchguard.ssl.http.pemcert_filepath")
 	private String httpPemCertFilePath;
@@ -114,12 +114,12 @@ public class EsNodeConfig {
 		this.transportEnforceHostnameVerification = transportEnforceHostnameVerification;
 	}
 
-	public boolean isHttpEnabled() {
-		return httpEnabled;
+	public boolean isHttpsEnabled() {
+		return httpsEnabled;
 	}
 
-	public void setHttpEnabled(boolean httpEnabled) {
-		this.httpEnabled = httpEnabled;
+	public void setHttpsEnabled(boolean httpsEnabled) {
+		this.httpsEnabled = httpsEnabled;
 	}
 
 	public String getHttpPemCertFilePath() {

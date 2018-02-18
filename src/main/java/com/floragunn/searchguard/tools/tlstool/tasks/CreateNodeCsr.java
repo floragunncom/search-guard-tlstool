@@ -68,14 +68,14 @@ public class CreateNodeCsr extends CreateNodeCertificateBase {
 
 		createTransportCsr();
 
-		if (ctx.getConfig().getDefaults().isHttpEnabled()) {
+		if (ctx.getConfig().getDefaults().isHttpsEnabled()) {
 			if (ctx.getConfig().getDefaults().isReuseTransportCertificatesForHttp()) {
 				addTransportCertificateToConfigAsHttpCertificate();				
 			} else {
 				createHttpCsr();
 			}
 		} else {
-			nodeResultConfig.setHttpEnabled(false);
+			nodeResultConfig.setHttpsEnabled(false);
 		}		
 
 		addOutputFile(configSnippetFile, createConfigSnippetComment(), createConfigSnippet());
@@ -86,7 +86,7 @@ public class CreateNodeCsr extends CreateNodeCertificateBase {
 		return "# This is a configuration snippet for the node " + getNodeFileName(nodeConfig) + "\n"
 				+ "# Before you can proceed with configuration, you need to pass the generated signing request which can be found in the\n"
 				+ "# file " + transportCsrFile.getName()
-				+ (ctx.getConfig().getDefaults().isHttpEnabled() ? " and " + httpCsrFile.getName() : "")
+				+ (ctx.getConfig().getDefaults().isHttpsEnabled() ? " and " + httpCsrFile.getName() : "")
 				+ " to your PKI in order to get the actual certificates.\n"
 				+ "# If you do not have a PKI, you can use this tool with the options --create-ca and --create-cert to create a self signed CA\n"
 				+ "# and sign the certificates with that CA.\n\n"

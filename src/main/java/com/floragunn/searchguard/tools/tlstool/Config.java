@@ -117,7 +117,7 @@ public class Config {
 		private String nodeOid = null;
 		private List<String> nodesDn; 
 		private int generatedPasswordLength = 12;
-		private boolean httpEnabled;
+		private boolean httpsEnabled;
 		private boolean reuseTransportCertificatesForHttp;
 		
 		public String getPkPassword() {
@@ -156,11 +156,11 @@ public class Config {
 		public void setNodesDn(List<String> nodesDn) {
 			this.nodesDn = nodesDn;
 		}
-		public boolean isHttpEnabled() {
-			return httpEnabled;
+		public boolean isHttpsEnabled() {
+			return httpsEnabled;
 		}
-		public void setHttpEnabled(boolean httpEnabled) {
-			this.httpEnabled = httpEnabled;
+		public void setHttpsEnabled(boolean httpsEnabled) {
+			this.httpsEnabled = httpsEnabled;
 		}
 		public boolean isReuseTransportCertificatesForHttp() {
 			return reuseTransportCertificatesForHttp;

@@ -71,14 +71,14 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 
 		createTransportCertificate();
 
-		if (ctx.getConfig().getDefaults().isHttpEnabled()) {
+		if (ctx.getConfig().getDefaults().isHttpsEnabled()) {
 			if (ctx.getConfig().getDefaults().isReuseTransportCertificatesForHttp()) {
 				addTransportCertificateToConfigAsHttpCertificate();
 			} else {
 				createRestCertificate();
 			}
 		} else {
-			nodeResultConfig.setHttpEnabled(false);
+			nodeResultConfig.setHttpsEnabled(false);
 		}
 
 		addOutputFile(configSnippetFile, createConfigSnippetComment(), createConfigSnippet());
