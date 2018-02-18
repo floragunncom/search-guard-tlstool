@@ -119,6 +119,8 @@ public class Config {
 		private int generatedPasswordLength = 12;
 		private boolean httpsEnabled;
 		private boolean reuseTransportCertificatesForHttp;
+		private boolean verifyHostnames;
+		private boolean resolveHostnames;
 		
 		public String getPkPassword() {
 			return pkPassword;
@@ -168,6 +170,19 @@ public class Config {
 		public void setReuseTransportCertificatesForHttp(boolean reuseTransportCertificatesForHttp) {
 			this.reuseTransportCertificatesForHttp = reuseTransportCertificatesForHttp;
 		}
+		public boolean isVerifyHostnames() {
+			return verifyHostnames;
+		}
+		public void setVerifyHostnames(boolean verifyHostnames) {
+			this.verifyHostnames = verifyHostnames;
+		}
+		public boolean isResolveHostnames() {
+			return resolveHostnames;
+		}
+		public void setResolveHostnames(boolean resolveHostnames) {
+			this.resolveHostnames = resolveHostnames;
+		}		
+		
 	}
 
 

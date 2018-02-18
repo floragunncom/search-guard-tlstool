@@ -42,7 +42,10 @@ public class EsNodeConfig {
 	
 	@JsonProperty("searchguard.ssl.transport.enforce_hostname_verification")
 	private boolean transportEnforceHostnameVerification = false;
-
+	
+	@JsonProperty("searchguard.ssl.transport.resolve_hostnames")
+	private boolean transportResolveDns = false;
+	
 	@JsonProperty("searchguard.ssl.http.enabled")
 	private boolean httpsEnabled = true;
 
@@ -57,10 +60,6 @@ public class EsNodeConfig {
 	
 	@JsonProperty("searchguard.ssl.http.pemtrustedcas_filepath")
 	private String httpPemTrustedCasFilePath;
-	
-	// TODO nicht gebraucht?
-	//@JsonProperty("searchguard.allow_unsafe_democertificates")
-	//private boolean allowUnsafeDemoCertificates = true;
 	
 	@JsonProperty("searchguard.nodes_dn")
 	private List<String> nodesDn;
@@ -185,4 +184,13 @@ public class EsNodeConfig {
 	public void setClientAuthMode(String clientAuthMode) {
 		this.clientAuthMode = clientAuthMode;
 	}
+
+	public boolean isTransportResolveDns() {
+		return transportResolveDns;
+	}
+
+	public void setTransportResolveDns(boolean transportResolveDns) {
+		this.transportResolveDns = transportResolveDns;
+	}
+
 }
