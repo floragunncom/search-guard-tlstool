@@ -43,7 +43,7 @@ public class EsNodeConfig {
 	@JsonProperty("searchguard.ssl.transport.enforce_hostname_verification")
 	private boolean transportEnforceHostnameVerification = false;
 	
-	@JsonProperty("searchguard.ssl.transport.resolve_hostnames")
+	@JsonProperty("searchguard.ssl.transport.resolve_hostname")
 	private boolean transportResolveDns = false;
 	
 	@JsonProperty("searchguard.ssl.http.enabled")
