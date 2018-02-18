@@ -81,10 +81,19 @@ public class ValidateCert extends DumpCert {
 			if (e.getCause() instanceof ExtCertPathValidatorException) {
 				ExtCertPathValidatorException cause = (ExtCertPathValidatorException) e.getCause();
 
-				log.error("No certificate path could be found: " + cause.getMessage());
+				if (cause.getCause() != null && cause.getCause() != cause && cause.getCause().getMessage() != null) {
+					log.error("No certificate path could be found: " + cause.getMessage() + " ["
+							+ cause.getCause().getMessage() + "]");
+				} else {
+					log.error("No certificate path could be found: " + cause.getMessage());
+				}
 
 				log.debug(cause.getCertPath().toString());
 				log.debug(cause.getReason());
+
+				if (cause.getCause() != null && cause.getCause() != cause) {
+					log.debug(cause.getCause());
+				}
 			} else {
 				log.error("No certificate path could be found: " + e.getMessage());
 			}
