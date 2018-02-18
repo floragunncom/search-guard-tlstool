@@ -121,7 +121,7 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 					new DERSequence(createSubjectAlternativeNameList(true)));
 
 			X509CertificateHolder nodeCertificate = builder.build(new JcaContentSignerBuilder("SHA1withRSA")
-					.setProvider(ctx.getSecurityProvider()).build(nodeKeyPair.getPrivate()));
+					.setProvider(ctx.getSecurityProvider()).build(ctx.getSigningPrivateKey()));
 
 			String privateKeyPassword = getPassword(nodeConfig.getPkPassword());
 
@@ -173,7 +173,7 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 					new DERSequence(createSubjectAlternativeNameList(false)));
 
 			X509CertificateHolder nodeCertificate = builder.build(new JcaContentSignerBuilder("SHA1withRSA")
-					.setProvider(ctx.getSecurityProvider()).build(nodeKeyPair.getPrivate()));
+					.setProvider(ctx.getSecurityProvider()).build(ctx.getSigningPrivateKey()));
 
 			String privateKeyPassword = getPassword(nodeConfig.getPkPassword());
 
