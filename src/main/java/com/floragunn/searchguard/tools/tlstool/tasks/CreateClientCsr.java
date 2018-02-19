@@ -71,7 +71,8 @@ public class CreateClientCsr extends CreateClientCertificateBase {
 			extensionsGenerator.addExtension(Extension.extendedKeyUsage, true,
 					new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_clientAuth }));
 
-			JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder("SHA256withRSA");
+			JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder(
+					ctx.getConfig().getDefaults().getSignatureAlgorithm());
 			ContentSigner signer = csBuilder.build(clientKeyPair.getPrivate());
 			org.bouncycastle.pkcs.PKCS10CertificationRequest csr = builder.build(signer);
 

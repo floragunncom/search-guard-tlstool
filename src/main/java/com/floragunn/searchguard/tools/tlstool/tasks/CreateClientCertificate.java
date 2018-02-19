@@ -62,7 +62,8 @@ public class CreateClientCertificate extends CreateClientCertificateBase {
 
 			KeyPair clientKeyPair = generateKeyPair(clientConfig.getKeysize());
 
-			SubjectPublicKeyInfo subPubKeyInfo = ctx.getSigningCertificate().getSubjectPublicKeyInfo();
+			SubjectPublicKeyInfo subPubKeyInfo = SubjectPublicKeyInfo
+					.getInstance(clientKeyPair.getPublic().getEncoded());
 
 			X500Name subjectName = createDn(clientConfig.getDn(), "client");
 			Date validityStartDate = new Date(System.currentTimeMillis());
@@ -84,8 +85,9 @@ public class CreateClientCertificate extends CreateClientCertificateBase {
 					.addExtension(Extension.extendedKeyUsage, true,
 							new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_clientAuth }));
 
-			X509CertificateHolder clientCertificate = builder.build(new JcaContentSignerBuilder("SHA1withRSA")
-					.setProvider(ctx.getSecurityProvider()).build(ctx.getSigningPrivateKey()));
+			X509CertificateHolder clientCertificate = builder
+					.build(new JcaContentSignerBuilder(ctx.getConfig().getDefaults().getSignatureAlgorithm())
+							.setProvider(ctx.getSecurityProvider()).build(ctx.getSigningPrivateKey()));
 
 			String privateKeyPassword = getPassword(clientConfig.getPkPassword());
 

@@ -41,7 +41,7 @@ import com.floragunn.searchguard.tools.tlstool.Context;
 import com.floragunn.searchguard.tools.tlstool.ToolException;
 
 public class CreateCa extends Task {
-	
+
 	private static final Logger log = LogManager.getLogger(CreateCa.class);
 
 	private Config.Ca.Certificate rootCertificateConfig;
@@ -69,15 +69,15 @@ public class CreateCa extends Task {
 		File rootKeyFile = getConfiguredFile(rootCertificateConfig.getFile(), "root-ca.key", "key");
 		File rootCertFile = getConfiguredFile(rootCertificateConfig.getFile(), "root-ca.pem", "pem");
 		File readmeFile = getConfiguredFile(rootCertificateConfig.getFile(), "root-ca.readme", "readme");
-		
+
 		if (rootKeyFile.exists()) {
 			throw new ToolException(rootKeyFile + " does already exist.");
 		}
-		
+
 		if (rootCertFile.exists()) {
-			throw new ToolException(rootCertFile + " does already exist.");			
+			throw new ToolException(rootCertFile + " does already exist.");
 		}
-		
+
 		KeyPair rootCaKeyPair = generateKeyPair(rootCertificateConfig.getKeysize());
 
 		X509CertificateHolder rootCaCertificate = createRootCaCertificate(rootCaKeyPair);
@@ -94,13 +94,13 @@ public class CreateCa extends Task {
 		if (signingCertificateConfig != null) {
 			File signingKeyFile = getConfiguredFile(signingCertificateConfig.getFile(), "signing-ca.key", "key");
 			File signingCertFile = getConfiguredFile(signingCertificateConfig.getFile(), "signing-ca.pem", "pem");
-			
+
 			if (signingKeyFile.exists()) {
 				throw new ToolException(signingKeyFile + " does already exist.");
 			}
-			
+
 			if (signingCertFile.exists()) {
-				throw new ToolException(signingCertFile + " does already exist.");				
+				throw new ToolException(signingCertFile + " does already exist.");
 			}
 
 			KeyPair intermediateKeyPair = generateKeyPair(signingCertificateConfig.getKeysize());
@@ -123,28 +123,29 @@ public class CreateCa extends Task {
 				&& isPasswordAutoGenerationEnabled(signingCertificateConfig.getPkPassword()))) {
 			addOutputFile(readmeFile, createReadme(rootPrivateKeyPassword, signingPrivateKeyPassword));
 		}
-		
+
 		log.info(createSuccessLog());
 	}
-	
+
 	private String createSuccessLog() {
 		StringBuilder result = new StringBuilder();
-		
+
 		result.append("Root certificate ");
-		
+
 		if (signingCertificateConfig != null) {
 			result.append("and signing certificate have ");
 		} else {
 			result.append("has ");
 		}
-		
+
 		result.append("been sucessfully created.\n");
-		
+
 		if (isPasswordAutoGenerationEnabled(rootCertificateConfig.getPkPassword()) || (signingCertificateConfig != null
 				&& isPasswordAutoGenerationEnabled(signingCertificateConfig.getPkPassword()))) {
-			result.append("The passwords of the private key files have been auto generated. You can find the passwords in root-ca.readme.\n");
+			result.append(
+					"The passwords of the private key files have been auto generated. You can find the passwords in root-ca.readme.\n");
 		}
-		
+
 		return result.toString();
 	}
 
@@ -171,8 +172,9 @@ public class CreateCa extends Task {
 					.addExtension(Extension.keyUsage, true,
 							new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyCertSign | KeyUsage.cRLSign));
 
-			X509CertificateHolder cert = builder.build(new JcaContentSignerBuilder("SHA1withRSA")
-					.setProvider(ctx.getSecurityProvider()).build(keyPair.getPrivate()));
+			X509CertificateHolder cert = builder
+					.build(new JcaContentSignerBuilder(ctx.getConfig().getDefaults().getSignatureAlgorithm())
+							.setProvider(ctx.getSecurityProvider()).build(keyPair.getPrivate()));
 			return cert;
 		} catch (CertIOException | OperatorCreationException e) {
 			throw new ToolException("Error while composing certificate", e);
@@ -204,8 +206,9 @@ public class CreateCa extends Task {
 					.addExtension(Extension.keyUsage, true,
 							new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyCertSign | KeyUsage.cRLSign));
 
-			X509CertificateHolder cert = builder.build(new JcaContentSignerBuilder("SHA1withRSA")
-					.setProvider(ctx.getSecurityProvider()).build(caKey.getPrivate()));
+			X509CertificateHolder cert = builder
+					.build(new JcaContentSignerBuilder(ctx.getConfig().getDefaults().getSignatureAlgorithm())
+							.setProvider(ctx.getSecurityProvider()).build(caKey.getPrivate()));
 			return cert;
 		} catch (CertIOException | OperatorCreationException e) {
 			throw new ToolException("Error while composing certificate", e);

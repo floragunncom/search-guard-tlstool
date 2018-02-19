@@ -96,7 +96,7 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 		try {
 			KeyPair nodeKeyPair = generateKeyPair(nodeConfig.getKeysize());
 
-			SubjectPublicKeyInfo subPubKeyInfo = ctx.getSigningCertificate().getSubjectPublicKeyInfo();
+			SubjectPublicKeyInfo subPubKeyInfo = SubjectPublicKeyInfo.getInstance(nodeKeyPair.getPublic().getEncoded());
 			X500Name subjectName = createDn(nodeConfig.getDn(), "node");
 			Date validityStartDate = new Date(System.currentTimeMillis());
 			Date validityEndDate = getEndDate(validityStartDate, nodeConfig.getValidityDays());
@@ -120,8 +120,9 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 			builder.addExtension(Extension.subjectAlternativeName, false,
 					new DERSequence(createSubjectAlternativeNameList(true)));
 
-			X509CertificateHolder nodeCertificate = builder.build(new JcaContentSignerBuilder("SHA1withRSA")
-					.setProvider(ctx.getSecurityProvider()).build(ctx.getSigningPrivateKey()));
+			X509CertificateHolder nodeCertificate = builder
+					.build(new JcaContentSignerBuilder(ctx.getConfig().getDefaults().getSignatureAlgorithm())
+							.setProvider(ctx.getSecurityProvider()).build(ctx.getSigningPrivateKey()));
 
 			String privateKeyPassword = getPassword(nodeConfig.getPkPassword());
 
@@ -148,7 +149,7 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 		try {
 			KeyPair nodeKeyPair = generateKeyPair(nodeConfig.getKeysize());
 
-			SubjectPublicKeyInfo subPubKeyInfo = ctx.getSigningCertificate().getSubjectPublicKeyInfo();
+			SubjectPublicKeyInfo subPubKeyInfo = SubjectPublicKeyInfo.getInstance(nodeKeyPair.getPublic().getEncoded());
 			X500Name subjectName = createDn(nodeConfig.getDn(), "node");
 			Date validityStartDate = new Date(System.currentTimeMillis());
 			Date validityEndDate = getEndDate(validityStartDate, nodeConfig.getValidityDays());
@@ -172,8 +173,9 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 			builder.addExtension(Extension.subjectAlternativeName, false,
 					new DERSequence(createSubjectAlternativeNameList(false)));
 
-			X509CertificateHolder nodeCertificate = builder.build(new JcaContentSignerBuilder("SHA1withRSA")
-					.setProvider(ctx.getSecurityProvider()).build(ctx.getSigningPrivateKey()));
+			X509CertificateHolder nodeCertificate = builder
+					.build(new JcaContentSignerBuilder(ctx.getConfig().getDefaults().getSignatureAlgorithm())
+							.setProvider(ctx.getSecurityProvider()).build(ctx.getSigningPrivateKey()));
 
 			String privateKeyPassword = getPassword(nodeConfig.getPkPassword());
 

@@ -121,6 +121,7 @@ public class Config {
 		private boolean reuseTransportCertificatesForHttp;
 		private boolean verifyHostnames;
 		private boolean resolveHostnames;
+		private String signatureAlgorithm = "SHA256withRSA";
 		
 		public String getPkPassword() {
 			return pkPassword;
@@ -181,6 +182,12 @@ public class Config {
 		}
 		public void setResolveHostnames(boolean resolveHostnames) {
 			this.resolveHostnames = resolveHostnames;
+		}
+		public String getSignatureAlgorithm() {
+			return signatureAlgorithm;
+		}
+		public void setSignatureAlgorithm(String signatureAlgorithm) {
+			this.signatureAlgorithm = signatureAlgorithm;
 		}		
 		
 	}

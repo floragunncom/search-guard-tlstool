@@ -70,13 +70,13 @@ public class CreateNodeCsr extends CreateNodeCertificateBase {
 
 		if (ctx.getConfig().getDefaults().isHttpsEnabled()) {
 			if (ctx.getConfig().getDefaults().isReuseTransportCertificatesForHttp()) {
-				addTransportCertificateToConfigAsHttpCertificate();				
+				addTransportCertificateToConfigAsHttpCertificate();
 			} else {
 				createHttpCsr();
 			}
 		} else {
 			nodeResultConfig.setHttpsEnabled(false);
-		}		
+		}
 
 		addOutputFile(configSnippetFile, createConfigSnippetComment(), createConfigSnippet());
 
@@ -117,7 +117,8 @@ public class CreateNodeCsr extends CreateNodeCertificateBase {
 			extensionsGenerator.addExtension(Extension.subjectAlternativeName, false,
 					new DERSequence(createSubjectAlternativeNameList(true)));
 
-			JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder("SHA256withRSA");
+			JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder(
+					ctx.getConfig().getDefaults().getSignatureAlgorithm());
 			ContentSigner signer = csBuilder.build(nodeKeyPair.getPrivate());
 			org.bouncycastle.pkcs.PKCS10CertificationRequest csr = builder.build(signer);
 
@@ -129,8 +130,8 @@ public class CreateNodeCsr extends CreateNodeCertificateBase {
 			nodeResultConfig.setTransportPemKeyFilePath(privateKeyFile.getPath());
 			nodeResultConfig.setTransportPemKeyPassword(privateKeyPassword);
 			nodeResultConfig.setTransportPemTrustedCasFilePath("<add path to trusted ca>");
-			nodeResultConfig.setTransportPemCertFilePath("<path to transport certificate for "+getNodeFileName(nodeConfig)+">");
-
+			nodeResultConfig.setTransportPemCertFilePath(
+					"<path to transport certificate for " + getNodeFileName(nodeConfig) + ">");
 
 			generatedCsrCount++;
 
@@ -161,7 +162,8 @@ public class CreateNodeCsr extends CreateNodeCertificateBase {
 			extensionsGenerator.addExtension(Extension.subjectAlternativeName, false,
 					new DERSequence(createSubjectAlternativeNameList(false)));
 
-			JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder("SHA256withRSA");
+			JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder(
+					ctx.getConfig().getDefaults().getSignatureAlgorithm());
 			ContentSigner signer = csBuilder.build(nodeKeyPair.getPrivate());
 			org.bouncycastle.pkcs.PKCS10CertificationRequest csr = builder.build(signer);
 
@@ -173,8 +175,9 @@ public class CreateNodeCsr extends CreateNodeCertificateBase {
 			nodeResultConfig.setHttpPemKeyFilePath(httpPrivateKeyFile.getPath());
 			nodeResultConfig.setHttpPemKeyPassword(privateKeyPassword);
 			nodeResultConfig.setHttpPemTrustedCasFilePath("<add path to trusted ca>");
-			nodeResultConfig.setHttpPemCertFilePath("<path to HTTP certificate for "+getNodeFileName(nodeConfig)+">");
-			
+			nodeResultConfig
+					.setHttpPemCertFilePath("<path to HTTP certificate for " + getNodeFileName(nodeConfig) + ">");
+
 			generatedCsrCount++;
 
 			if (isPasswordAutoGenerationEnabled(nodeConfig.getPkPassword())) {
