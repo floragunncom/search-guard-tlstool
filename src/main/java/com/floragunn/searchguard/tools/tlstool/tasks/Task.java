@@ -37,6 +37,7 @@ import org.apache.logging.log4j.Logger;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.RFC4519Style;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
 import org.bouncycastle.openssl.PEMException;
@@ -148,7 +149,7 @@ public abstract class Task {
 
 	protected X500Name createDn(String dn, String role) throws ToolException {
 		try {
-			return new X500Name(dn);
+			return new X500Name(RFC4519Style.INSTANCE, dn);
 		} catch (IllegalArgumentException e) {
 			throw new ToolException("Invalid DN specified for " + role + ": " + dn, e);
 		}
@@ -174,7 +175,7 @@ public abstract class Task {
 			if ("auto".equalsIgnoreCase(password) || "none".equalsIgnoreCase(password)) {
 				password = null;
 			}
- 			
+
 			return readObjectFromPem(file, new FileReader(file), expectedType, password);
 		} catch (FileNotFoundException e) {
 			throw new ToolException("File does not exist: " + file);
@@ -233,7 +234,7 @@ public abstract class Task {
 					throw new ToolException("File " + file
 							+ " is encrypted but no password is given. Please specify a password in the configuration file.");
 				}
-				
+
 				try {
 					PrivateKeyInfo privateKeyInfo = ((PKCS8EncryptedPrivateKeyInfo) object).decryptPrivateKeyInfo(
 							new JceOpenSSLPKCS8DecryptorProviderBuilder().build(password.toCharArray()));

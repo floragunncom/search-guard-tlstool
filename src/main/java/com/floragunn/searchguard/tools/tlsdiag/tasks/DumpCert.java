@@ -20,6 +20,7 @@ package com.floragunn.searchguard.tools.tlsdiag.tasks;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
@@ -112,19 +113,19 @@ public class DumpCert extends Task {
 	private String getCertSummary(X509Certificate certificate) {
 		StringBuilder result = new StringBuilder();
 
-		result.append("           SHA1 FPR: ").append(getFingerprint(certificate, "SHA1")).append('\n');
-		result.append("            MD5 FPR: ").append(getFingerprint(certificate, "MD5")).append('\n');
-		result.append("         Subject DN: ").append(certificate.getSubjectDN()).append('\n');
-		result.append("      Serial Number: ").append(certificate.getSerialNumber()).append('\n');
-		result.append("          Issuer DN: ").append(certificate.getIssuerDN()).append('\n');
-		result.append("         Not Before: ").append(certificate.getNotBefore()).append('\n');
-		result.append("          Not After: ").append(certificate.getNotAfter()).append('\n');
-		result.append("          Key Usage: ").append(getKeyUsageInfo(certificate)).append('\n');
-		result.append("Signature Algorithm: ").append(certificate.getSigAlgName()).append('\n');
-		result.append("            Version: ").append(certificate.getVersion()).append('\n');
+		result.append("            SHA1 FPR: ").append(getFingerprint(certificate, "SHA1")).append('\n');
+		result.append("             MD5 FPR: ").append(getFingerprint(certificate, "MD5")).append('\n');
+		result.append("Subject DN [RFC2253]: ").append(certificate.getSubjectX500Principal().getName()).append('\n');
+		result.append("       Serial Number: ").append(certificate.getSerialNumber()).append('\n');
+		result.append(" Issuer DN [RFC2253]: ").append(certificate.getSubjectX500Principal().getName()).append('\n');
+		result.append("          Not Before: ").append(certificate.getNotBefore()).append('\n');
+		result.append("           Not After: ").append(certificate.getNotAfter()).append('\n');
+		result.append("           Key Usage: ").append(getKeyUsageInfo(certificate)).append('\n');
+		result.append(" Signature Algorithm: ").append(certificate.getSigAlgName()).append('\n');
+		result.append("             Version: ").append(certificate.getVersion()).append('\n');
 
 		try {
-			result.append(" Extended Key Usage: ")
+			result.append("  Extended Key Usage: ")
 					.append(Strings.join(ReverseKeyPurposeIdMap.getNamesById(certificate.getExtendedKeyUsage()), ' '))
 					.append('\n');
 		} catch (CertificateParsingException e) {
@@ -240,7 +241,8 @@ public class DumpCert extends Task {
 			case GeneralName.registeredID:
 				return String.valueOf(ASN1ObjectIdentifier.getInstance(generalName.getName()).getId());
 			case GeneralName.iPAddress:
-				return String.valueOf(DEROctetString.getInstance(generalName.getName()).getOctets());
+				return String.valueOf(InetAddress
+						.getByAddress(DEROctetString.getInstance(generalName.getName()).getOctets()).getHostAddress());
 			default:
 				return String.valueOf(generalName.getName());
 			}
