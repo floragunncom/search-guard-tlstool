@@ -95,16 +95,17 @@ public abstract class CreateNodeCertificateBase extends Task {
 
 		try {
 
-			nodeResultConfig.setNodesDn(collectFilteredNodesDn());
 			nodeResultConfig.setAuthczAdminDn(collectAdminDn());
 
-			if (ctx.getConfig().getDefaults().getNodeOid() != null) {
+			if (!Strings.isNullOrEmpty(ctx.getConfig().getDefaults().getNodeOid())) {
 				nodeResultConfig.setCertOid(ctx.getConfig().getDefaults().getNodeOid());
+			} else {
+				nodeResultConfig.setNodesDn(collectFilteredNodesDn());
 			}
 
 			nodeResultConfig.setTransportEnforceHostnameVerification(ctx.getConfig().getDefaults().isVerifyHostnames());
 			nodeResultConfig.setTransportResolveDns(ctx.getConfig().getDefaults().isResolveHostnames());
-			
+
 			ObjectMapper objectMapper = new ObjectMapper(
 					new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
 							.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES));
