@@ -24,6 +24,7 @@ import java.security.KeyPair;
 import javax.security.auth.x500.X500Principal;
 
 import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.ExtensionsGenerator;
@@ -149,7 +150,7 @@ public class CreateNodeCsr extends CreateNodeCertificateBase {
 			KeyPair nodeKeyPair = generateKeyPair(nodeConfig.getKeysize());
 
 			PKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(
-					new X500Principal(nodeConfig.getDn()), nodeKeyPair.getPublic());
+					createDn(nodeConfig.getDn(), "node"), nodeKeyPair.getPublic());
 
 			ExtensionsGenerator extensionsGenerator = new ExtensionsGenerator();
 
@@ -161,6 +162,8 @@ public class CreateNodeCsr extends CreateNodeCertificateBase {
 
 			extensionsGenerator.addExtension(Extension.subjectAlternativeName, false,
 					new DERSequence(createSubjectAlternativeNameList(false)));
+
+			builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_extensionRequest, extensionsGenerator.generate());
 
 			JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder(
 					ctx.getConfig().getDefaults().getSignatureAlgorithm());

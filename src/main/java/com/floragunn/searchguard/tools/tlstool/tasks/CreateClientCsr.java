@@ -23,6 +23,7 @@ import java.security.KeyPair;
 
 import javax.security.auth.x500.X500Principal;
 
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.ExtensionsGenerator;
@@ -61,7 +62,7 @@ public class CreateClientCsr extends CreateClientCertificateBase {
 			KeyPair clientKeyPair = generateKeyPair(clientConfig.getKeysize());
 
 			PKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(
-					new X500Principal(clientConfig.getDn()), clientKeyPair.getPublic());
+					createDn(clientConfig.getDn(), "client"), clientKeyPair.getPublic());
 
 			ExtensionsGenerator extensionsGenerator = new ExtensionsGenerator();
 
@@ -71,6 +72,8 @@ public class CreateClientCsr extends CreateClientCertificateBase {
 			extensionsGenerator.addExtension(Extension.extendedKeyUsage, true,
 					new ExtendedKeyUsage(new KeyPurposeId[] { KeyPurposeId.id_kp_clientAuth }));
 
+			builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_extensionRequest, extensionsGenerator.generate());
+			
 			JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder(
 					ctx.getConfig().getDefaults().getSignatureAlgorithm());
 			ContentSigner signer = csBuilder.build(clientKeyPair.getPrivate());
