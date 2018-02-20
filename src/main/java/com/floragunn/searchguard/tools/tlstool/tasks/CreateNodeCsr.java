@@ -118,6 +118,8 @@ public class CreateNodeCsr extends CreateNodeCertificateBase {
 			extensionsGenerator.addExtension(Extension.subjectAlternativeName, false,
 					new DERSequence(createSubjectAlternativeNameList(true)));
 
+			builder.addAttribute(PKCSObjectIdentifiers.pkcs_9_at_extensionRequest, extensionsGenerator.generate());
+
 			JcaContentSignerBuilder csBuilder = new JcaContentSignerBuilder(
 					ctx.getConfig().getDefaults().getSignatureAlgorithm());
 			ContentSigner signer = csBuilder.build(nodeKeyPair.getPrivate());
