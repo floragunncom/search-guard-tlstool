@@ -102,6 +102,13 @@ defaults:
       
       # reuseTransportCertificatesForHttp: false
       
+      # Set this to true to enable hostname verification
+      #verifyHostnames: false
+      
+      # Set this to true to resolve hostnames
+      #resolveHostnames: false
+      
+      
 ###
 ### Nodes
 ###
