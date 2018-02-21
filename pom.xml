@@ -141,7 +141,7 @@
             <id>sgtlstool</id>
             <phase>package</phase>
             <configuration>
-              <appendAssemblyId>true</appendAssemblyId>
+              <appendAssemblyId>false</appendAssemblyId>
               <outputDirectory>${project.build.directory}/releases/</outputDirectory>
               <descriptors>
                 <descriptor>${sgtlstool.descriptor}</descriptor>
