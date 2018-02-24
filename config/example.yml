@@ -65,8 +65,8 @@ defaults:
       # enclosing the DN in //. 
       # Specification of this is optional. The tool will always include
       # the DNs of the nodes specified in the nodes section.            
-      nodesDn:
-      - "CN=*.example.com,OU=Ops,O=Example Com\\, Inc.,DC=example,DC=com"
+      #nodesDn:
+      #- "CN=*.example.com,OU=Ops,O=Example Com\\, Inc.,DC=example,DC=com"
       # - 'CN=node.other.com,OU=SSL,O=Test,L=Test,C=DE'
       # - 'CN=*.example.com,OU=SSL,O=Test,L=Test,C=DE'
       # - 'CN=elk-devcluster*'
