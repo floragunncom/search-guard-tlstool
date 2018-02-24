@@ -202,7 +202,7 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 		nodeResultConfig.setHttpPemCertFilePath(nodeResultConfig.getTransportPemCertFilePath());
 		nodeResultConfig.setHttpPemKeyFilePath(nodeResultConfig.getTransportPemKeyFilePath());
 		nodeResultConfig.setHttpPemKeyPassword(nodeResultConfig.getTransportPemKeyPassword());
-		nodeResultConfig.setHttpPemTrustedCasFilePath(nodeResultConfig.getTransportPemCertFilePath());
+		nodeResultConfig.setHttpPemTrustedCasFilePath(nodeResultConfig.getTransportPemTrustedCasFilePath());
 	}
 
 	public static int getGeneratedCertificateCount() {
