@@ -117,7 +117,7 @@ public class DumpCert extends Task {
 		result.append("             MD5 FPR: ").append(getFingerprint(certificate, "MD5")).append('\n');
 		result.append("Subject DN [RFC2253]: ").append(certificate.getSubjectX500Principal().getName()).append('\n');
 		result.append("       Serial Number: ").append(certificate.getSerialNumber()).append('\n');
-		result.append(" Issuer DN [RFC2253]: ").append(certificate.getSubjectX500Principal().getName()).append('\n');
+		result.append(" Issuer DN [RFC2253]: ").append(certificate.getIssuerX500Principal().getName()).append('\n');
 		result.append("          Not Before: ").append(certificate.getNotBefore()).append('\n');
 		result.append("           Not After: ").append(certificate.getNotAfter()).append('\n');
 		result.append("           Key Usage: ").append(getKeyUsageInfo(certificate)).append('\n');
