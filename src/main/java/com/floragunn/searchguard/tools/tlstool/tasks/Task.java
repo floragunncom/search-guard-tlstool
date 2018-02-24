@@ -148,10 +148,14 @@ public abstract class Task {
 	}
 
 	protected X500Name createDn(String dn, String role) throws ToolException {
+		if (Strings.isNullOrEmpty(dn)) {
+			throw new ToolException("No DN specified for " + role + " certificate");
+		}
+
 		try {
 			return new X500Name(RFC4519Style.INSTANCE, dn);
 		} catch (IllegalArgumentException e) {
-			throw new ToolException("Invalid DN specified for " + role + ": " + dn, e);
+			throw new ToolException("Invalid DN specified for " + role + " certificate: " + dn, e);
 		}
 	}
 
