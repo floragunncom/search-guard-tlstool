@@ -40,15 +40,19 @@ public class LoadCa extends Task {
 		if (caConfig == null) {
 			throw new ToolException("Configuration ca is required");
 		}
+		
+		if (caConfig.getRoot() == null) {
+			throw new ToolException("Configuration ca.root is required");
+		}
+		
+		ctx.setRootCaFile(getConfiguredFile(caConfig.getRoot().getFile(), "root-ca.pem", "pem"));
 
 		if (caConfig.getIntermediate() != null) {
 			this.signingCertificateConfig = caConfig.getIntermediate();
 			this.fileNameBase = "signing-ca";
-			ctx.setRootCaFile(getConfiguredFile(caConfig.getRoot().getFile(), "root-ca.pem", "pem"));
 		} else {
 			this.signingCertificateConfig = caConfig.getRoot();
 			this.fileNameBase = "root-ca";
-			ctx.setRootCaFile(getConfiguredFile(caConfig.getIntermediate().getFile(), "signing-ca.pem", "pem"));
 		}
 
 		if (this.signingCertificateConfig == null) {
