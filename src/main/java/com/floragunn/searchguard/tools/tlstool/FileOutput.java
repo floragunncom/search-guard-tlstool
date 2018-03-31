@@ -74,6 +74,10 @@ public class FileOutput {
 		append(file, password, entries);
 	}
 
+	public FileEntry getEntryByFileName(String fileName) {
+		return fileEntryMap.get(new File(fileName));
+	}
+
 	private void add(File file, String password, Object... entries) {
 		FileEntry fileEntry = fileEntryMap.get(file);
 
@@ -134,7 +138,7 @@ public class FileOutput {
 				result.add(object);
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -150,7 +154,7 @@ public class FileOutput {
 		return generator.generate();
 	}
 
-	static class FileEntry {
+	public static class FileEntry {
 		private final File file;
 		private final List<Object> entries;
 		private final String password;

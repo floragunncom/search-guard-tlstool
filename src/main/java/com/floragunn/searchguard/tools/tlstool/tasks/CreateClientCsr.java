@@ -21,8 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.security.KeyPair;
 
-import javax.security.auth.x500.X500Principal;
-
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extension;

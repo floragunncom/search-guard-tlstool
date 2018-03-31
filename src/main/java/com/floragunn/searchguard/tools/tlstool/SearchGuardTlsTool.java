@@ -19,7 +19,6 @@ package com.floragunn.searchguard.tools.tlstool;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.Provider;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,12 +51,10 @@ import com.google.common.base.Strings;
 public class SearchGuardTlsTool {
 
 	private static final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
-	private static final Provider securityProvider = new BouncyCastleProvider();
 	private static final Logger log = LogManager.getLogger(SearchGuardTlsTool.class);
 	private static Options options;
 
 	public static void main(String[] args) {
-		Security.addProvider(securityProvider);
 		objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
 
 		try {
@@ -149,7 +145,8 @@ public class SearchGuardTlsTool {
 
 		Context ctx = new Context();
 		ctx.setConfig(config);
-		ctx.setSecurityProvider(securityProvider);
+
+		Security.addProvider(ctx.getSecurityProvider());
 
 		List<Task> tasks = new ArrayList<>();
 

@@ -24,13 +24,13 @@ import java.security.Provider;
 import java.security.SecureRandom;
 
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class Context {
-	private Provider securityProvider;
+	private Provider securityProvider = new BouncyCastleProvider();
 	private final FileOutput fileOutput = new FileOutput(this);
 
 	private File targetDirectory;
-	private X509CertificateHolder rootCaCertificate;
 	private X509CertificateHolder signingCertificate;
 	private File rootCaFile;
 	private PrivateKey signingPrivateKey;
@@ -45,14 +45,6 @@ public class Context {
 
 	public FileOutput getFileOutput() {
 		return fileOutput;
-	}
-
-	public X509CertificateHolder getRootCaCertificate() {
-		return rootCaCertificate;
-	}
-
-	public void setRootCaCertificate(X509CertificateHolder rootCaCertificate) {
-		this.rootCaCertificate = rootCaCertificate;
 	}
 
 	public X509CertificateHolder getSigningCertificate() {

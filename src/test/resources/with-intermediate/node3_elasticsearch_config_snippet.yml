@@ -1,0 +1,25 @@
+# This is a configuration snippet for the node node3
+# This snippet needs to be inserted into the file config/elasticsearch.yml of the respective node.
+# If the config file already contains SearchGuard configuration, this needs to be replaced.
+# Furthermore, you need to copy the files referenced below into the same directory.
+# Please refer to http://docs.search-guard.com/latest/configuring-tls for further configuration of your installation.
+
+
+searchguard.ssl.transport.pemcert_filepath: node3.pem
+searchguard.ssl.transport.pemkey_filepath: node3.key
+searchguard.ssl.transport.pemkey_password: secret
+searchguard.ssl.transport.pemtrustedcas_filepath: root-ca.pem
+searchguard.ssl.transport.enforce_hostname_verification: false
+searchguard.ssl.transport.resolve_hostname: false
+searchguard.ssl.http.enabled: true
+searchguard.ssl.http.pemcert_filepath: node3_http.pem
+searchguard.ssl.http.pemkey_filepath: node3_http.key
+searchguard.ssl.http.pemkey_password: secret
+searchguard.ssl.http.pemtrustedcas_filepath: root-ca.pem
+searchguard.nodes_dn:
+- CN=node1.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
+- CN=node2.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
+- CN=node3.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
+- CN=node4.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com
+searchguard.authcz.admin_dn:
+- CN=kirk.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com

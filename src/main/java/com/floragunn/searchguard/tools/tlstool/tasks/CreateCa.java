@@ -82,7 +82,6 @@ public class CreateCa extends Task {
 
 		X509CertificateHolder rootCaCertificate = createRootCaCertificate(rootCaKeyPair);
 
-		ctx.setRootCaCertificate(rootCaCertificate);
 		ctx.setRootCaFile(rootCertFile);
 
 		String rootPrivateKeyPassword = getPassword(rootCertificateConfig.getPkPassword());
