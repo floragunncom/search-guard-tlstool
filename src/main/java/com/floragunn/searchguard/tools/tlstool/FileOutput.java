@@ -115,8 +115,8 @@ public class FileOutput {
 					if (object instanceof String) {
 						writer.write((String) object);
 					} else {
-						if (object instanceof PrivateKey && fileEntry.getPassword() != null) {
-							object = createEncryptedPem((PrivateKey) object, fileEntry.getPassword().toCharArray());
+						if (object instanceof PrivateKey) {
+							object = createPkcs8PrivateKeyPem((PrivateKey) object, fileEntry.getPassword());
 						}
 
 						writer.writeObject(object);
@@ -142,13 +142,18 @@ public class FileOutput {
 		return result;
 	}
 
-	private PemObject createEncryptedPem(PrivateKey privateKey, char[] password)
+	private PemObject createPkcs8PrivateKeyPem(PrivateKey privateKey, String password)
 			throws PemGenerationException, OperatorCreationException {
-		JceOpenSSLPKCS8EncryptorBuilder encryptorBuilder = new JceOpenSSLPKCS8EncryptorBuilder(
-				PKCS8Generator.PBE_SHA1_3DES);
-		encryptorBuilder.setRandom(ctx.getSecureRandom());
-		encryptorBuilder.setPasssword(password);
-		OutputEncryptor outputEncryptor = encryptorBuilder.build();
+		OutputEncryptor outputEncryptor = null;
+
+		if (password != null) {
+			JceOpenSSLPKCS8EncryptorBuilder encryptorBuilder = new JceOpenSSLPKCS8EncryptorBuilder(
+					PKCS8Generator.PBE_SHA1_3DES);
+			encryptorBuilder.setRandom(ctx.getSecureRandom());
+			encryptorBuilder.setPasssword(password.toCharArray());
+			outputEncryptor = encryptorBuilder.build();
+		}
+
 		PKCS8Generator generator = new PKCS8Generator(PrivateKeyInfo.getInstance(privateKey.getEncoded()),
 				outputEncryptor);
 		return generator.generate();
