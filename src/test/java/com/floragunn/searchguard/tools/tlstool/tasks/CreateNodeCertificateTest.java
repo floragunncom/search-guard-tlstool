@@ -1,3 +1,20 @@
+/*
+ * Copyright 2017-2018 floragunn GmbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ */
+
 package com.floragunn.searchguard.tools.tlstool.tasks;
 
 import java.net.InetAddress;
@@ -81,12 +98,12 @@ public class CreateNodeCertificateTest {
 		Assert.assertEquals(2, fileEntry.getEntries().size());
 
 		Assert.assertNotNull(fileOutput.getEntryByFileName("test-node.key"));
-		
+
 		X509CertificateHolder cert = (X509CertificateHolder) fileEntry.getEntries().get(0);
-		
-		Assert.assertEquals("2:node99.example.com;2:*.node99.example.com;7:10.8.0.123;", getSubjectAlternativeNameInfo(cert));
-		
-		
+
+		Assert.assertEquals("2:node99.example.com;2:*.node99.example.com;7:10.8.0.123;",
+				getSubjectAlternativeNameInfo(cert));
+
 		fileEntry = fileOutput.getEntryByFileName("test-node_http.pem");
 		Assert.assertEquals("cn=node99.example.com,ou=QA",
 				((X509CertificateHolder) fileEntry.getEntries().get(0)).getSubject().toString());
@@ -154,9 +171,9 @@ public class CreateNodeCertificateTest {
 	private String getSubjectAlternativeNameInfo(X509CertificateHolder cert) {
 
 		StringBuilder result = new StringBuilder("");
-		
-		for (GeneralName generalName : GeneralNames.fromExtensions(cert.getExtensions(), Extension.subjectAlternativeName).getNames()) {
-			
+
+		for (GeneralName generalName : GeneralNames
+				.fromExtensions(cert.getExtensions(), Extension.subjectAlternativeName).getNames()) {
 			result.append(generalName.getTagNo()).append(":").append(generalNameValueToString(generalName)).append(";");
 		}
 
