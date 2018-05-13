@@ -80,4 +80,28 @@ public class LoadCaTest {
 
 
 	}
+	
+	@Test
+	public void testWithIntermediateCertUnencryptedPk() throws ToolException {
+		Context ctx = new Context();
+		Config.Ca caConfig = new Config.Ca();
+		Config.Ca.Certificate rootCertificateConfig = new Config.Ca.Certificate();
+		Config.Ca.Certificate intermediateCertificateConfig = new Config.Ca.Certificate();
+
+		rootCertificateConfig.setFile(TestResources.getAbsolutePath("with-intermediate-unencrypted-pk/root-ca.pem"));
+		rootCertificateConfig.setPkPassword("none");
+		intermediateCertificateConfig.setFile(TestResources.getAbsolutePath("with-intermediate-unencrypted-pk/signing-ca.pem"));
+		intermediateCertificateConfig.setPkPassword("none");
+		
+		caConfig.setRoot(rootCertificateConfig);
+		caConfig.setIntermediate(intermediateCertificateConfig);
+
+		LoadCa loadCa = new LoadCa(ctx, caConfig);
+
+		loadCa.run();
+
+		Assert.assertEquals("DC=com,DC=example,O=Example Com\\, Inc.,OU=CA,CN=signing.ca.example.com",
+				ctx.getSigningCertificate().getSubject().toString());
+		Assert.assertEquals(-1490461901, ctx.getSigningPrivateKey().hashCode());
+	}
 }

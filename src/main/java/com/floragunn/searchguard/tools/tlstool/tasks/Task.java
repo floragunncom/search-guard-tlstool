@@ -247,6 +247,8 @@ public abstract class Task {
 				} catch (Exception e) {
 					throw new ToolException("Error reading encrypted file " + file + "; bad password?", e);
 				}
+			} else if (object instanceof PrivateKeyInfo) {
+				return privateKeyInfoToPrivateKey((PrivateKeyInfo) object);
 			}
 		}
 
