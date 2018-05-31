@@ -116,7 +116,7 @@ public abstract class CreateNodeCertificateBase extends Task {
 		}
 	}
 
-	private List<String> collectFilteredNodesDn() {
+	private List<String> collectFilteredNodesDn() throws ToolException {
 
 		List<String> preconfiguredNodesDn = ctx.getConfig().getDefaults().getNodesDn();
 
@@ -136,7 +136,7 @@ public abstract class CreateNodeCertificateBase extends Task {
 		}
 	}
 
-	private List<String> collectNodesDn() {
+	private List<String> collectNodesDn() throws ToolException {
 		if (ctx.getConfig().getNodes() == null) {
 			return Collections.emptyList();
 		}
@@ -145,7 +145,7 @@ public abstract class CreateNodeCertificateBase extends Task {
 
 		for (Config.Node node : ctx.getConfig().getNodes()) {
 			if (node.getDn() != null) {
-				result.add(node.getDn());
+				result.add(sanitizeDn(node.getDn(), "node"));
 			}
 		}
 
@@ -165,7 +165,7 @@ public abstract class CreateNodeCertificateBase extends Task {
 					throw new ToolException("No dn specified for admin client " + client);
 				}
 
-				result.add(client.getDn());
+				result.add(sanitizeDn(client.getDn(), "admin"));
 			}
 		}
 

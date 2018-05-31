@@ -29,6 +29,9 @@ import java.security.PrivateKey;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.naming.InvalidNameException;
+import javax.naming.ldap.LdapName;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
@@ -155,6 +158,18 @@ public abstract class Task {
 		try {
 			return new X500Name(RFC4519Style.INSTANCE, dn);
 		} catch (IllegalArgumentException e) {
+			throw new ToolException("Invalid DN specified for " + role + " certificate: " + dn, e);
+		}
+	}
+	
+	protected String sanitizeDn(String dn, String role) throws ToolException {
+		if (Strings.isNullOrEmpty(dn)) {
+			throw new ToolException("No DN specified for " + role + " certificate");
+		}
+
+		try {
+			return new LdapName(new LdapName(dn).getRdns()).toString();
+		} catch (InvalidNameException e) {
 			throw new ToolException("Invalid DN specified for " + role + " certificate: " + dn, e);
 		}
 	}
