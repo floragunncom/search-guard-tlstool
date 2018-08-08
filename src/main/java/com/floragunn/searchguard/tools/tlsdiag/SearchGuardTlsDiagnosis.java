@@ -57,174 +57,174 @@ import com.floragunn.searchguard.tools.tlstool.ToolException;
 import com.floragunn.searchguard.tools.util.EsNodeConfig;
 import com.floragunn.searchguard.tools.util.PemFileUtils;
 
-/**
- * TODO - KeyStore for TrustAnchors?
- * https://stackoverflow.com/questions/2457795/x-509-certificate-validation-with-java-and-bouncycastle
- * - CRL
- */
 public class SearchGuardTlsDiagnosis {
-	private static final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
-	private static final Provider securityProvider = new BouncyCastleProvider();
-	private static final Logger log = LogManager.getLogger(SearchGuardTlsDiagnosis.class);
-	private static Options options;
+    private static final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
+    private static final Provider securityProvider = new BouncyCastleProvider();
+    private static final Logger log = LogManager.getLogger(SearchGuardTlsDiagnosis.class);
+    private static Options options;
 
-	public static void main(String[] args) {
-		Security.addProvider(securityProvider);
-		objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+    public static void main(String[] args) {
+        Security.addProvider(securityProvider);
+        objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
 
-		try {
-			new SearchGuardTlsDiagnosis(parseOptions(args)).run();
-		} catch (ToolException e) {
-			log.error(e.getMessage());
-			log.debug("Exception: ", e);
-			System.exit(1);
-		}
-	}
+        try {
+            new SearchGuardTlsDiagnosis(parseOptions(args)).run();
+        } catch (ToolException e) {
+            log.error(e.getMessage());
+            log.debug("Exception: ", e);
+            System.exit(1);
+        }
+    }
 
-	private static CommandLine parseOptions(String[] args) {
-		options = new Options();
-		options.addOption(Option.builder("es").longOpt("es-config").hasArg()
-				.desc("Path to the ElasticSearch config file containing the SearchGuard TLS configuration").build());
-		options.addOption(Option.builder("ca").longOpt("trusted-ca").hasArgs()
-				.desc("Path to a PEM file containing the certificate of a trusted CA").build());
-		options.addOption(Option.builder("crt").longOpt("certificates").hasArgs()
-				.desc("Path to PEM files containing certificates to be checked").build());
+    private static CommandLine parseOptions(String[] args) {
+        options = new Options();
+        options.addOption(Option.builder("es").longOpt("es-config").hasArg()
+                .desc("Path to the ElasticSearch config file containing the SearchGuard TLS configuration").build());
+        options.addOption(Option.builder("ca").longOpt("trusted-ca").hasArgs()
+                .desc("Path to a PEM file containing the certificate of a trusted CA").build());
+        options.addOption(Option.builder("crt").longOpt("certificates").hasArgs()
+                .desc("Path to PEM files containing certificates to be checked").build());
 
-		options.addOption(Option.builder("v").longOpt("verbose").desc("Enable detailed output").build());
+        options.addOption(Option.builder("v").longOpt("verbose").desc("Enable detailed output").build());
 
-		try {
+        try {
 
-			CommandLineParser parser = new DefaultParser();
-			CommandLine line = parser.parse(options, args);
+            CommandLineParser parser = new DefaultParser();
+            CommandLine line = parser.parse(options, args);
 
-			return line;
-		} catch (ParseException e) {
-			new HelpFormatter().printHelp("sgtlsdiag.sh", options, true);
-			System.exit(1);
-			return null;
-		}
-	}
+            return line;
+        } catch (ParseException e) {
+            new HelpFormatter().printHelp("sgtlsdiag.sh", options, true);
+            System.exit(1);
+            return null;
+        }
+    }
 
-	private CommandLine commandLine;
-	private List<Task> tasks = new ArrayList<>();
+    private CommandLine commandLine;
+    private List<Task> tasks = new ArrayList<>();
 
-	SearchGuardTlsDiagnosis(CommandLine commandLine) {
-		this.commandLine = commandLine;
-	}
+    SearchGuardTlsDiagnosis(CommandLine commandLine) {
+        this.commandLine = commandLine;
+    }
 
-	private void run() throws ToolException {
+    private void run() throws ToolException {
 
-		if (commandLine.hasOption("v")) {
-			Configurator.setRootLevel(Level.DEBUG);
-			Configurator.setLevel("STDOUT", Level.DEBUG);
+        if (commandLine.hasOption("v")) {
+            Configurator.setRootLevel(Level.DEBUG);
+            Configurator.setLevel("STDOUT", Level.DEBUG);
 
-			System.setProperty("java.security.debug", "certpath");
-		}
+            System.setProperty("java.security.debug", "certpath");
+        }
 
-		if (commandLine.hasOption("ca") && !commandLine.hasOption("crt")) {
-			throw new ToolException(
-					"You must specifiy at least one certificate to check using the --certificates option");
-		}
+        if (commandLine.hasOption("ca") && !commandLine.hasOption("crt")) {
+            throw new ToolException(
+                    "You must specifiy at least one certificate to check using the --certificates option");
+        }
 
-		if (commandLine.hasOption("crt")) {
-			if (!commandLine.hasOption("ca")) {
-				throw new ToolException(
-						"You must specify the certificate of the trusted CA using the --trusted-ca option");
-			}
+        if (commandLine.hasOption("crt")) {
+            if (!commandLine.hasOption("ca")) {
+                throw new ToolException(
+                        "You must specify the certificate of the trusted CA using the --trusted-ca option");
+            }
 
-			Set<TrustAnchor> trustAnchors = loadTrustAnchors(Stream.of(commandLine.getOptionValues("ca"))
-					.map(fileName -> new File(fileName)).collect(Collectors.toSet()));
+            Set<TrustAnchor> trustAnchors = loadTrustAnchors(Stream.of(commandLine.getOptionValues("ca"))
+                    .map(fileName -> new File(fileName)).collect(Collectors.toSet()));
 
-			for (String certFileName : commandLine.getOptionValues("crt")) {
-				tasks.add(new ValidateCert(trustAnchors, new File(certFileName)));
-			}
+            for (String certFileName : commandLine.getOptionValues("crt")) {
+                tasks.add(new ValidateCert(trustAnchors, new File(certFileName)));
+            }
 
-			if (commandLine.hasOption("v")) {
-				for (String caFileName : commandLine.getOptionValues("ca")) {
-					tasks.add(new DumpCert(new File(caFileName)));
-				}
-			}
-		}
+            if (commandLine.hasOption("v")) {
+                for (String caFileName : commandLine.getOptionValues("ca")) {
+                    tasks.add(new DumpCert(new File(caFileName)));
+                }
+            }
+        }
 
-		if (commandLine.hasOption("es")) {
-			processEsConfigFile(new File(commandLine.getOptionValue("es")));
-		}
+        if (commandLine.hasOption("es")) {
+            processEsConfigFile(new File(commandLine.getOptionValue("es")));
+        }
 
-		if (!commandLine.hasOption("crt") && !commandLine.hasOption("es")) {
-			new HelpFormatter().printHelp("sgtlsdiag.sh", options, true);
-			System.exit(1);
-		}
+        if (!commandLine.hasOption("crt") && !commandLine.hasOption("es")) {
+            new HelpFormatter().printHelp("sgtlsdiag.sh", options, true);
+            System.exit(1);
+        }
 
-		for (Task task : tasks) {
-			task.run();
-		}
+        for (Task task : tasks) {
+            task.run();
+        }
 
-	}
+    }
 
-	private Set<TrustAnchor> loadTrustAnchors(Set<File> files) throws ToolException {
+    private Set<TrustAnchor> loadTrustAnchors(Set<File> files) throws ToolException {
 
-		HashSet<TrustAnchor> result = new HashSet<>();
+        HashSet<TrustAnchor> result = new HashSet<>();
 
-		for (File file : files) {
-			try {
-				List<X509Certificate> certificates = PemFileUtils.readCertificatesFromPemFile(file);
+        for (File file : files) {
+            try {
+                List<X509Certificate> certificates = PemFileUtils.readCertificatesFromPemFile(file);
 
-				for (X509Certificate certificate : certificates) {
-					result.add(new TrustAnchor(certificate, null));
-				}
-			} catch (FileNotFoundException e) {
-				throw new ToolException("The file " + file + " does not exist", e);
-			} catch (Exception e) {
-				throw new ToolException("Error while reading " + file + ": " + e, e);
-			}
-		}
+                for (X509Certificate certificate : certificates) {
+                    result.add(new TrustAnchor(certificate, null));
+                }
+            } catch (FileNotFoundException e) {
+                throw new ToolException("The file " + file + " does not exist", e);
+            } catch (Exception e) {
+                throw new ToolException("Error while reading " + file + ": " + e, e);
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	private void processEsConfigFile(File file) throws ToolException {
-		try {
-			log.info("Reading node config file " + file);
+    private void processEsConfigFile(File file) throws ToolException {
+        try {
+            log.info("Reading node config file " + file);
 
-			EsNodeConfig esNodeConfig = objectMapper.readValue(file, EsNodeConfig.class);
+            EsNodeConfig esNodeConfig = objectMapper.readValue(file, EsNodeConfig.class);
 
-			Set<TrustAnchor> transportTrustAnchors = new HashSet<>();
-			Set<TrustAnchor> httpTrustAnchors = new HashSet<>();
-			Set<File> allCaFiles = new HashSet<>();
+            Set<TrustAnchor> transportTrustAnchors = new HashSet<>();
+            Set<TrustAnchor> httpTrustAnchors = new HashSet<>();
+            Set<File> allCaFiles = new HashSet<>();
 
-			if (esNodeConfig.getTransportPemTrustedCasFilePath() != null) {
-				File pemFile = new File(file.getParentFile(), esNodeConfig.getTransportPemTrustedCasFilePath());
-				transportTrustAnchors = loadTrustAnchors(Collections.singleton(pemFile));
-				allCaFiles.add(pemFile);
-			}
+            if (esNodeConfig.isKeystoreOrTruststoreAttributeSet()) {
+                log.error("\nWARNING: The config file '" + file.getName()
+                        + "' is configured to use JKS files, which are deprecated since Search Guard 6. This tool only supports checking PEM files.\n");
+            }
 
-			if (esNodeConfig.getHttpPemTrustedCasFilePath() != null) {
-				File pemFile = new File(file.getParentFile(), esNodeConfig.getHttpPemTrustedCasFilePath());
-				httpTrustAnchors = loadTrustAnchors(Collections.singleton(pemFile));
-				allCaFiles.add(pemFile);
-			}
+            if (esNodeConfig.getTransportPemTrustedCasFilePath() != null) {
+                File pemFile = new File(file.getParentFile(), esNodeConfig.getTransportPemTrustedCasFilePath());
+                transportTrustAnchors = loadTrustAnchors(Collections.singleton(pemFile));
+                allCaFiles.add(pemFile);
+            }
 
-			if (esNodeConfig.getTransportPemCertFilePath() != null) {
-				tasks.add(new ValidateCert(transportTrustAnchors,
-						new File(file.getParentFile(), esNodeConfig.getTransportPemCertFilePath())));
-			}
+            if (esNodeConfig.getHttpPemTrustedCasFilePath() != null) {
+                File pemFile = new File(file.getParentFile(), esNodeConfig.getHttpPemTrustedCasFilePath());
+                httpTrustAnchors = loadTrustAnchors(Collections.singleton(pemFile));
+                allCaFiles.add(pemFile);
+            }
 
-			if (esNodeConfig.getHttpPemCertFilePath() != null) {
-				tasks.add(new ValidateCert(httpTrustAnchors,
-						new File(file.getParentFile(), esNodeConfig.getHttpPemCertFilePath())));
-			}
+            if (esNodeConfig.getTransportPemCertFilePath() != null) {
+                tasks.add(new ValidateCert(transportTrustAnchors,
+                        new File(file.getParentFile(), esNodeConfig.getTransportPemCertFilePath())));
+            }
 
-			for (File caFile : allCaFiles) {
-				tasks.add(new DumpCert(caFile));
-			}
+            if (esNodeConfig.getHttpPemCertFilePath() != null) {
+                tasks.add(new ValidateCert(httpTrustAnchors,
+                        new File(file.getParentFile(), esNodeConfig.getHttpPemCertFilePath())));
+            }
 
-		} catch (JsonParseException | JsonMappingException e) {
-			throw new ToolException("ES node config file " + file + " is invalid: " + file, e);
-		} catch (FileNotFoundException e) {
-			throw new ToolException("ES node config file does not exist: " + file);
-		} catch (IOException e) {
-			throw new ToolException("Error while reading " + file + ": " + e, e);
-		}
+            for (File caFile : allCaFiles) {
+                tasks.add(new DumpCert(caFile));
+            }
 
-	}
+        } catch (JsonParseException | JsonMappingException e) {
+            throw new ToolException("ES node config file " + file + " is invalid: " + file, e);
+        } catch (FileNotFoundException e) {
+            throw new ToolException("ES node config file does not exist: " + file);
+        } catch (IOException e) {
+            throw new ToolException("Error while reading " + file + ": " + e, e);
+        }
+
+    }
 }
