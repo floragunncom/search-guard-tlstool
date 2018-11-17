@@ -6,11 +6,11 @@
   <parent>
     <groupId>com.floragunn</groupId>
     <artifactId>search-guard-parent</artifactId>
-    <version>6.20.0</version>
+    <version>6.22.1</version>
   </parent>
 
   <artifactId>search-guard-tlstool</artifactId>
-  <version>1.4</version>
+  <version>1.6-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>search-guard-tlstool</name>
@@ -27,13 +27,13 @@
   </licenses>
 
   <properties>
-    <bc.version>1.59</bc.version>
+    <bc.version>1.60</bc.version>
     <commons.cli.version>1.4</commons.cli.version>
     <commons.io.version>2.6</commons.io.version>
-    <commons.text.version>1.2</commons.text.version>
-    <log4j.version>2.9.1</log4j.version>
-    <jackson.version>2.9.4</jackson.version>
-    <guava.version>23.0</guava.version>
+    <commons.text.version>1.6</commons.text.version>
+    <log4j.version>2.11.1</log4j.version>
+    <jackson.version>2.9.7</jackson.version>
+    <guava.version>25.1-jre</guava.version>
     <sgtlstool.descriptor>${basedir}/src/main/assemblies/sgtlstool-standalone.xml</sgtlstool.descriptor>
   </properties>
 
