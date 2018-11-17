@@ -26,8 +26,6 @@ import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-import javax.xml.bind.DatatypeConverter;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.Strings;
@@ -41,9 +39,10 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.Extensions;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.TBSCertificate;
+import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.util.encoders.Hex;
 import org.bouncycastle.util.io.pem.PemObject;
-import org.bouncycastle.x509.extension.X509ExtensionUtil;
 
 import com.floragunn.searchguard.tools.util.PemFileUtils;
 import com.floragunn.searchguard.tools.util.ReverseKeyPurposeIdMap;
@@ -188,7 +187,7 @@ public class DumpCert extends Task {
 			byte[] der = certificate.getEncoded();
 			messageDigest.update(der);
 			byte[] digest = messageDigest.digest();
-			String digestHex = DatatypeConverter.printHexBinary(digest);
+			String digestHex = Hex.toHexString(digest);
 			return digestHex;
 		} catch (Exception e) {
 			log.debug("Error in getFingerprint()", e);
@@ -207,7 +206,7 @@ public class DumpCert extends Task {
 			StringBuilder result = new StringBuilder("\n");
 
 			for (ASN1Encodable encodable : DERSequence
-					.getInstance(X509ExtensionUtil.fromExtensionValue(extensionBytes))) {
+					.getInstance(JcaX509ExtensionUtils.parseExtensionValue(extensionBytes))) {
 				GeneralName generalName = GeneralName.getInstance(encodable);
 
 				if (generalName.getTagNo() < GENERAL_NAME_TAG_NAMES.length) {
