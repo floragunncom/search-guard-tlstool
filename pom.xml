@@ -26,12 +26,12 @@
   </licenses>
 
   <properties>
-    <bc.version>1.60</bc.version>
+    <bc.version>1.61</bc.version>
     <commons.cli.version>1.4</commons.cli.version>
     <commons.io.version>2.6</commons.io.version>
     <commons.text.version>1.6</commons.text.version>
     <log4j.version>2.11.1</log4j.version>
-    <jackson.version>2.9.8</jackson.version>
+    <jackson.version>2.9.9</jackson.version>
     <guava.version>25.1-jre</guava.version>
     <sgtlstool.descriptor>${basedir}/src/main/assemblies/sgtlstool-standalone.xml</sgtlstool.descriptor>
   </properties>
