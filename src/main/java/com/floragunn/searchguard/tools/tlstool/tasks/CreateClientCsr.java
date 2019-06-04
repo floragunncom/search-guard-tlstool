@@ -57,7 +57,7 @@ public class CreateClientCsr extends CreateClientCertificateBase {
 				return;
 			}
 
-			KeyPair clientKeyPair = generateKeyPair(clientConfig.getKeysize());
+			KeyPair clientKeyPair = generateKeyPair(clientConfig);
 
 			PKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(
 					createDn(clientConfig.getDn(), "client"), clientKeyPair.getPublic());

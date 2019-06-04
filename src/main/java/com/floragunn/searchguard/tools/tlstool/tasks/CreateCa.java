@@ -78,7 +78,7 @@ public class CreateCa extends Task {
 			throw new ToolException(rootCertFile + " does already exist.");
 		}
 
-		KeyPair rootCaKeyPair = generateKeyPair(rootCertificateConfig.getKeysize());
+		KeyPair rootCaKeyPair = generateKeyPair(rootCertificateConfig);
 
 		X509CertificateHolder rootCaCertificate = createRootCaCertificate(rootCaKeyPair);
 
@@ -102,7 +102,7 @@ public class CreateCa extends Task {
 				throw new ToolException(signingCertFile + " does already exist.");
 			}
 
-			KeyPair intermediateKeyPair = generateKeyPair(signingCertificateConfig.getKeysize());
+			KeyPair intermediateKeyPair = generateKeyPair(signingCertificateConfig);
 			X509CertificateHolder intermediateCertificate = createIntermediateCertificate(intermediateKeyPair,
 					rootCaKeyPair, rootCaCertificate);
 

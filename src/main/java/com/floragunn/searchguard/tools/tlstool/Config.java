@@ -121,7 +121,13 @@ public class Config {
 		private boolean reuseTransportCertificatesForHttp;
 		private boolean verifyHostnames;
 		private boolean resolveHostnames;
-		private String signatureAlgorithm = "SHA256withRSA";
+		private boolean useEllipticCurves;
+		private String ellipticCurve = "P-384";
+	    private String signatureAlgorithm;
+
+		private static final String defaultSignatureAlgorithmRsa = "SHA256withRSA";
+		private static final String defaultSignatureAlgorithmEcdsa = "SHA256withECDSA";
+		
 		
 		public String getPkPassword() {
 			return pkPassword;
@@ -184,12 +190,28 @@ public class Config {
 			this.resolveHostnames = resolveHostnames;
 		}
 		public String getSignatureAlgorithm() {
-			return signatureAlgorithm;
+		    if(this.signatureAlgorithm == null) {
+                return useEllipticCurves?defaultSignatureAlgorithmEcdsa:defaultSignatureAlgorithmRsa;
+            } else {
+                return this.signatureAlgorithm;
+            }
 		}
 		public void setSignatureAlgorithm(String signatureAlgorithm) {
 			this.signatureAlgorithm = signatureAlgorithm;
-		}		
-		
+		}
+        public boolean isUseEllipticCurves() {
+            return useEllipticCurves;
+        }
+        public void setUseEllipticCurves(boolean useEllipticCurves) {
+            this.useEllipticCurves = useEllipticCurves;
+        }
+        public String getEllipticCurve() {
+            return ellipticCurve;
+        }
+        public void setEllipticCurve(String ellipticCurve) {
+            this.ellipticCurve = ellipticCurve;
+        }		
+
 	}
 
 
@@ -226,13 +248,15 @@ public class Config {
 			
 		}
 
-		public static class Certificate {
+		public static class Certificate implements KeyGenParameters {
 			private Integer keysize = null;
 			private String dn;
 			private Integer validityDays = null;
 			private List<String> crlDistributionPoints;
 			private String file;
 			private String pkPassword;
+		    private Boolean useEllipticCurves;
+		    private String ellipticCurve;
 			
 			public String getPkPassword() {
 				return pkPassword;
@@ -272,8 +296,24 @@ public class Config {
 			public void setFile(String file) {
 				this.file = file;
 			}
-			
-			public void applyDefaults(Defaults defaults) {
+
+			public Boolean getUseEllipticCurves() {
+                return useEllipticCurves;
+            }
+
+            public void setUseEllipticCurves(Boolean useEllipticCurves) {
+                this.useEllipticCurves = useEllipticCurves;
+            }
+
+            public String getEllipticCurve() {
+                return ellipticCurve;
+            }
+
+            public void setEllipticCurve(String ellipticCurve) {
+                this.ellipticCurve = ellipticCurve;
+            }
+
+            public void applyDefaults(Defaults defaults) {
 				if (keysize == null) {
 					keysize = defaults.getKeysize();
 				}
@@ -285,6 +325,14 @@ public class Config {
 				if (pkPassword == null) {
 					pkPassword = defaults.getPkPassword();
 				}
+								
+				if (useEllipticCurves == null) {
+				    useEllipticCurves = defaults.isUseEllipticCurves();
+				}
+				
+				if (ellipticCurve == null) {
+				    ellipticCurve = defaults.getEllipticCurve();
+                }
 				
 			}
 		}
@@ -292,7 +340,7 @@ public class Config {
 	
 	
 	
-	public static class Node {
+	public static class Node implements KeyGenParameters {
 		private String name;
 		private String dn;
 		private List<String> dns;
@@ -301,6 +349,8 @@ public class Config {
 		private Integer keysize;
 		private String pkPassword;
 		private Integer validityDays;
+		private Boolean useEllipticCurves;
+	    private String ellipticCurve;
 		
 		public String getName() {
 			return name;
@@ -357,6 +407,22 @@ public class Config {
 			this.validityDays = validityDays;
 		}
 		
+		public Boolean getUseEllipticCurves() {
+            return useEllipticCurves;
+        }
+
+        public void setUseEllipticCurves(Boolean useEllipticCurves) {
+            this.useEllipticCurves = useEllipticCurves;
+        }
+
+        public String getEllipticCurve() {
+            return ellipticCurve;
+        }
+
+        public void setEllipticCurve(String ellipticCurve) {
+            this.ellipticCurve = ellipticCurve;
+        }
+		
 		public void applyDefaults(Defaults defaults) {
 			if (keysize == null) {
 				keysize = defaults.getKeysize();
@@ -369,17 +435,27 @@ public class Config {
 			if (validityDays == null) {
 				validityDays = defaults.getValidityDays();
 			}
+			
+            if (useEllipticCurves == null) {
+                useEllipticCurves = defaults.isUseEllipticCurves();
+            }
+            
+            if (ellipticCurve == null) {
+                ellipticCurve = defaults.getEllipticCurve();
+            }
 		}
 		
 	}
 	
-	public static class Client {
+	public static class Client implements KeyGenParameters {
 		private String name;
 		private String dn;
 		private Integer keysize;
 		private String pkPassword;
 		private boolean admin;
 		private Integer validityDays;
+		private Boolean useEllipticCurves;
+	    private String ellipticCurve;
 
 		public String getName() {
 			return name;
@@ -425,6 +501,22 @@ public class Config {
 			this.validityDays = validityDays;
 		}
 		
+		public Boolean getUseEllipticCurves() {
+            return useEllipticCurves;
+        }
+
+        public void setUseEllipticCurves(Boolean useEllipticCurves) {
+            this.useEllipticCurves = useEllipticCurves;
+        }
+
+        public String getEllipticCurve() {
+            return ellipticCurve;
+        }
+
+        public void setEllipticCurve(String ellipticCurve) {
+            this.ellipticCurve = ellipticCurve;
+        }
+		
 		public void applyDefaults(Defaults defaults) {
 			if (keysize == null) {
 				keysize = defaults.getKeysize();
@@ -437,12 +529,25 @@ public class Config {
 			if (validityDays == null) {
 				validityDays = defaults.getValidityDays();
 			}
+			
+            if (useEllipticCurves == null) {
+                useEllipticCurves = defaults.isUseEllipticCurves();
+            }
+            
+            if (ellipticCurve == null) {
+                ellipticCurve = defaults.getEllipticCurve();
+            }
 		}
 
 
 	}
 
+	public interface KeyGenParameters {
+	    Integer getKeysize();
+	    Boolean getUseEllipticCurves();
+	    String getEllipticCurve();
 
+	}
 
 
 }
