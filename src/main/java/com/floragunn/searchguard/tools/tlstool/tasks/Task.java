@@ -77,12 +77,12 @@ public abstract class Task {
 
 		    KeyPairGenerator generator;
 		    if(parameters.getUseEllipticCurves() != null && parameters.getUseEllipticCurves()) {
-		        log.info("Create {} with EC ({})", parameters.getClass().getSimpleName(), parameters.getEllipticCurve());
+		        log.debug("Create {} with EC ({})", parameters.getClass().getSimpleName(), parameters.getEllipticCurve());
 		        generator = KeyPairGenerator.getInstance("EC", ctx.getSecurityProvider());
 		        ECGenParameterSpec ecsp = new ECGenParameterSpec(parameters.getEllipticCurve());
 		        generator.initialize(ecsp);
 		    } else {
-                log.info("Create {} with RSA ({})", parameters.getClass().getSimpleName(), parameters.getKeysize());
+                log.debug("Create {} with RSA ({})", parameters.getClass().getSimpleName(), parameters.getKeysize());
 		        generator = KeyPairGenerator.getInstance("RSA", ctx.getSecurityProvider());
 		        generator.initialize(parameters.getKeysize());
 		    }
