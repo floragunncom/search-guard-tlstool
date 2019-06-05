@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>search-guard-tlstool</artifactId>
-  <version>1.7-SNAPSHOT</version>
+  <version>1.7</version>
   <packaging>jar</packaging>
 
   <name>search-guard-tlstool</name>
@@ -40,7 +40,7 @@
     <url>https://github.com/floragunncom/search-guard-tlstool</url>
     <connection>scm:git:git@github.com:floragunncom/search-guard-tlstool.git</connection>
     <developerConnection>scm:git:git@github.com:floragunncom/search-guard-tlstool.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>v1.7</tag>
   </scm>
 
   <issueManagement>
