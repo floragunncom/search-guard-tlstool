@@ -133,4 +133,108 @@ public class CreateCaTest {
         Assert.assertNotNull(fileOutput.getEntryByFileName("root-ca.key"));
         Assert.assertNotNull(fileOutput.getEntryByFileName("signing-ca.key"));
     }
+    
+    @Test
+    public void testWithIntermediateCertECNoDefaults() throws ToolException {
+        Context ctx = new Context();
+        Config config = new Config();
+        Config.Ca caConfig = new Config.Ca();
+        Config.Ca.Certificate rootCertificateConfig = new Config.Ca.Certificate();
+        Config.Ca.Certificate intermediateCertificateConfig = new Config.Ca.Certificate();
+        Config.Defaults defaults = new Config.Defaults();
+        defaults.setUseEllipticCurves(true);
+        defaults.setEllipticCurve("secp256k1");
+        defaults.setSignatureAlgorithm("SHA512withECDSA");
+
+        rootCertificateConfig.setFile("root-ca.pem");
+        rootCertificateConfig.setPkPassword("secret");
+        rootCertificateConfig.setValidityDays(3650);
+        rootCertificateConfig.setDn("CN=root.ca.example.com,OU=QA");
+        rootCertificateConfig.applyDefaults(defaults);
+
+        intermediateCertificateConfig.setFile("signing-ca.pem");
+        intermediateCertificateConfig.setPkPassword("secret");
+        intermediateCertificateConfig.setKeysize(2048);
+        intermediateCertificateConfig.setValidityDays(3650);
+        intermediateCertificateConfig.setDn("CN=signing.ca.example.com,OU=QA");
+        intermediateCertificateConfig.applyDefaults(defaults);
+
+        caConfig.setRoot(rootCertificateConfig);
+        caConfig.setIntermediate(intermediateCertificateConfig);
+
+        config.setDefaults(defaults);
+        caConfig.applyDefaults(defaults);
+        config.setCa(caConfig);
+
+        ctx.setConfig(config);
+
+        CreateCa createCa = new CreateCa(ctx, caConfig);
+        createCa.run();
+
+        Assert.assertEquals("cn=signing.ca.example.com,ou=QA", ctx.getSigningCertificate().getSubject().toString());
+        Assert.assertNotNull(ctx.getSigningPrivateKey());
+
+        FileOutput fileOutput = ctx.getFileOutput();
+
+        FileOutput.FileEntry fileEntry = fileOutput.getEntryByFileName("root-ca.pem");
+        Assert.assertEquals("cn=root.ca.example.com,ou=QA", ((X509CertificateHolder) fileEntry.getEntries().get(0)).getSubject().toString());
+
+        fileEntry = fileOutput.getEntryByFileName("signing-ca.pem");
+        Assert.assertEquals("cn=signing.ca.example.com,ou=QA", ((X509CertificateHolder) fileEntry.getEntries().get(0)).getSubject().toString());
+
+        Assert.assertNotNull(fileOutput.getEntryByFileName("root-ca.key"));
+        Assert.assertNotNull(fileOutput.getEntryByFileName("signing-ca.key"));
+    }
+    
+    @Test
+    public void testWithIntermediateCertRSANoDefaults() throws ToolException {
+        Context ctx = new Context();
+        Config config = new Config();
+        Config.Ca caConfig = new Config.Ca();
+        Config.Ca.Certificate rootCertificateConfig = new Config.Ca.Certificate();
+        Config.Ca.Certificate intermediateCertificateConfig = new Config.Ca.Certificate();
+        Config.Defaults defaults = new Config.Defaults();
+        defaults.setKeysize(1024);
+        defaults.setEllipticCurve("secp256k1");
+        defaults.setSignatureAlgorithm("SHA512withRSA");
+
+        rootCertificateConfig.setFile("root-ca.pem");
+        rootCertificateConfig.setPkPassword("secret");
+        rootCertificateConfig.setValidityDays(3650);
+        rootCertificateConfig.setDn("CN=root.ca.example.com,OU=QA");
+        rootCertificateConfig.applyDefaults(defaults);
+
+        intermediateCertificateConfig.setFile("signing-ca.pem");
+        intermediateCertificateConfig.setPkPassword("secret");
+        intermediateCertificateConfig.setKeysize(2048);
+        intermediateCertificateConfig.setValidityDays(3650);
+        intermediateCertificateConfig.setDn("CN=signing.ca.example.com,OU=QA");
+        intermediateCertificateConfig.applyDefaults(defaults);
+
+        caConfig.setRoot(rootCertificateConfig);
+        caConfig.setIntermediate(intermediateCertificateConfig);
+
+        config.setDefaults(defaults);
+        caConfig.applyDefaults(defaults);
+        config.setCa(caConfig);
+
+        ctx.setConfig(config);
+
+        CreateCa createCa = new CreateCa(ctx, caConfig);
+        createCa.run();
+
+        Assert.assertEquals("cn=signing.ca.example.com,ou=QA", ctx.getSigningCertificate().getSubject().toString());
+        Assert.assertNotNull(ctx.getSigningPrivateKey());
+
+        FileOutput fileOutput = ctx.getFileOutput();
+
+        FileOutput.FileEntry fileEntry = fileOutput.getEntryByFileName("root-ca.pem");
+        Assert.assertEquals("cn=root.ca.example.com,ou=QA", ((X509CertificateHolder) fileEntry.getEntries().get(0)).getSubject().toString());
+
+        fileEntry = fileOutput.getEntryByFileName("signing-ca.pem");
+        Assert.assertEquals("cn=signing.ca.example.com,ou=QA", ((X509CertificateHolder) fileEntry.getEntries().get(0)).getSubject().toString());
+
+        Assert.assertNotNull(fileOutput.getEntryByFileName("root-ca.key"));
+        Assert.assertNotNull(fileOutput.getEntryByFileName("signing-ca.key"));
+    }
 }
