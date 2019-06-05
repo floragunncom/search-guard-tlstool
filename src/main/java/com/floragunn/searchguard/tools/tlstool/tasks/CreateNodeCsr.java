@@ -102,7 +102,7 @@ public class CreateNodeCsr extends CreateNodeCertificateBase {
 
 	private void createTransportCsr() throws ToolException {
 		try {
-			KeyPair nodeKeyPair = generateKeyPair(nodeConfig.getKeysize());
+			KeyPair nodeKeyPair = generateKeyPair(nodeConfig);
 
 			PKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(
 					new X500Principal(nodeConfig.getDn()), nodeKeyPair.getPublic());
@@ -149,7 +149,7 @@ public class CreateNodeCsr extends CreateNodeCertificateBase {
 
 	private void createHttpCsr() throws ToolException {
 		try {
-			KeyPair nodeKeyPair = generateKeyPair(nodeConfig.getKeysize());
+			KeyPair nodeKeyPair = generateKeyPair(nodeConfig);
 
 			PKCS10CertificationRequestBuilder builder = new JcaPKCS10CertificationRequestBuilder(
 					createDn(nodeConfig.getDn(), "node"), nodeKeyPair.getPublic());

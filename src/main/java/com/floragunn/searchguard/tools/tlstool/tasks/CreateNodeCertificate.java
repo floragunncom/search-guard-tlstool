@@ -94,7 +94,7 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 
 	private void createTransportCertificate() throws ToolException {
 		try {
-			KeyPair nodeKeyPair = generateKeyPair(nodeConfig.getKeysize());
+			KeyPair nodeKeyPair = generateKeyPair(nodeConfig);
 
 			SubjectPublicKeyInfo subPubKeyInfo = SubjectPublicKeyInfo.getInstance(nodeKeyPair.getPublic().getEncoded());
 			X500Name subjectName = createDn(nodeConfig.getDn(), "node");
@@ -152,7 +152,7 @@ public class CreateNodeCertificate extends CreateNodeCertificateBase {
 	private void createRestCertificate() throws ToolException {
 
 		try {
-			KeyPair nodeKeyPair = generateKeyPair(nodeConfig.getKeysize());
+			KeyPair nodeKeyPair = generateKeyPair(nodeConfig);
 
 			SubjectPublicKeyInfo subPubKeyInfo = SubjectPublicKeyInfo.getInstance(nodeKeyPair.getPublic().getEncoded());
 			X500Name subjectName = createDn(nodeConfig.getDn(), "node");

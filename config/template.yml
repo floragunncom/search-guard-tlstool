@@ -108,7 +108,14 @@ defaults:
       # Set this to true to resolve hostnames
       #resolveHostnames: false
       
+      # Use elliptic curves instead of RSA, Default is false.
+      #useEllipticCurves: true
       
+      # The curve to be used (default is NIST P-384)
+      #ellipticCurve: secp256k1
+
+      # Signature algorithm (for RSA default is SHA256withRSA, for EC its SHA256withECDSA)
+      #signatureAlgorithm: SHA512withRSA
 ###
 ### Nodes
 ###

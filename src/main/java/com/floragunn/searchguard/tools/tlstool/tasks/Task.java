@@ -22,10 +22,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.spec.ECGenParameterSpec;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -54,6 +56,7 @@ import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
 import org.bouncycastle.pkcs.PKCSException;
 
 import com.floragunn.searchguard.tools.tlstool.Config;
+import com.floragunn.searchguard.tools.tlstool.Config.KeyGenParameters;
 import com.floragunn.searchguard.tools.tlstool.Context;
 import com.floragunn.searchguard.tools.tlstool.ToolException;
 import com.google.common.base.Strings;
@@ -69,14 +72,25 @@ public abstract class Task {
 
 	public abstract void run() throws ToolException;
 
-	protected KeyPair generateKeyPair(int keySize) throws ToolException {
+	protected KeyPair generateKeyPair(KeyGenParameters parameters) throws ToolException {
 		try {
-			KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", ctx.getSecurityProvider());
-			generator.initialize(keySize);
+
+		    KeyPairGenerator generator;
+		    if(ctx.getConfig().getDefaults().isUseEllipticCurves()) {
+		        log.debug("Create {} with EC ({})", parameters.getClass().getSimpleName(), parameters.getEllipticCurve());
+		        generator = KeyPairGenerator.getInstance("EC", ctx.getSecurityProvider());
+		        ECGenParameterSpec ecsp = new ECGenParameterSpec(parameters.getEllipticCurve());
+		        generator.initialize(ecsp);
+		    } else {
+                log.debug("Create {} with RSA ({})", parameters.getClass().getSimpleName(), parameters.getKeysize());
+		        generator = KeyPairGenerator.getInstance("RSA", ctx.getSecurityProvider());
+		        generator.initialize(parameters.getKeysize());
+		    }
 
 			KeyPair keyPair = generator.generateKeyPair();
 			return keyPair;
-		} catch (NoSuchAlgorithmException e) {
+
+		} catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
 			throw new RuntimeException(e);
 		}
 	}

@@ -60,7 +60,7 @@ public class CreateClientCertificate extends CreateClientCertificateBase {
 				return;
 			}
 
-			KeyPair clientKeyPair = generateKeyPair(clientConfig.getKeysize());
+			KeyPair clientKeyPair = generateKeyPair(clientConfig);
 
 			SubjectPublicKeyInfo subPubKeyInfo = SubjectPublicKeyInfo
 					.getInstance(clientKeyPair.getPublic().getEncoded());
