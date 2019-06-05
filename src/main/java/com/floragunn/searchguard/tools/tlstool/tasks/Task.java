@@ -76,7 +76,7 @@ public abstract class Task {
 		try {
 
 		    KeyPairGenerator generator;
-		    if(parameters.getUseEllipticCurves() != null && parameters.getUseEllipticCurves()) {
+		    if(ctx.getConfig().getDefaults().isUseEllipticCurves()) {
 		        log.debug("Create {} with EC ({})", parameters.getClass().getSimpleName(), parameters.getEllipticCurve());
 		        generator = KeyPairGenerator.getInstance("EC", ctx.getSecurityProvider());
 		        ECGenParameterSpec ecsp = new ECGenParameterSpec(parameters.getEllipticCurve());

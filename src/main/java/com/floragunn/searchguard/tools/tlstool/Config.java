@@ -255,7 +255,6 @@ public class Config {
 			private List<String> crlDistributionPoints;
 			private String file;
 			private String pkPassword;
-		    private Boolean useEllipticCurves;
 		    private String ellipticCurve;
 			
 			public String getPkPassword() {
@@ -297,14 +296,6 @@ public class Config {
 				this.file = file;
 			}
 
-			public Boolean getUseEllipticCurves() {
-                return useEllipticCurves;
-            }
-
-            public void setUseEllipticCurves(Boolean useEllipticCurves) {
-                this.useEllipticCurves = useEllipticCurves;
-            }
-
             public String getEllipticCurve() {
                 return ellipticCurve;
             }
@@ -324,10 +315,6 @@ public class Config {
 				
 				if (pkPassword == null) {
 					pkPassword = defaults.getPkPassword();
-				}
-								
-				if (useEllipticCurves == null) {
-				    useEllipticCurves = defaults.isUseEllipticCurves();
 				}
 				
 				if (ellipticCurve == null) {
@@ -349,7 +336,6 @@ public class Config {
 		private Integer keysize;
 		private String pkPassword;
 		private Integer validityDays;
-		private Boolean useEllipticCurves;
 	    private String ellipticCurve;
 		
 		public String getName() {
@@ -406,14 +392,6 @@ public class Config {
 		public void setValidityDays(Integer validityDays) {
 			this.validityDays = validityDays;
 		}
-		
-		public Boolean getUseEllipticCurves() {
-            return useEllipticCurves;
-        }
-
-        public void setUseEllipticCurves(Boolean useEllipticCurves) {
-            this.useEllipticCurves = useEllipticCurves;
-        }
 
         public String getEllipticCurve() {
             return ellipticCurve;
@@ -435,10 +413,6 @@ public class Config {
 			if (validityDays == null) {
 				validityDays = defaults.getValidityDays();
 			}
-			
-            if (useEllipticCurves == null) {
-                useEllipticCurves = defaults.isUseEllipticCurves();
-            }
             
             if (ellipticCurve == null) {
                 ellipticCurve = defaults.getEllipticCurve();
@@ -454,7 +428,6 @@ public class Config {
 		private String pkPassword;
 		private boolean admin;
 		private Integer validityDays;
-		private Boolean useEllipticCurves;
 	    private String ellipticCurve;
 
 		public String getName() {
@@ -501,14 +474,6 @@ public class Config {
 			this.validityDays = validityDays;
 		}
 		
-		public Boolean getUseEllipticCurves() {
-            return useEllipticCurves;
-        }
-
-        public void setUseEllipticCurves(Boolean useEllipticCurves) {
-            this.useEllipticCurves = useEllipticCurves;
-        }
-
         public String getEllipticCurve() {
             return ellipticCurve;
         }
@@ -529,10 +494,6 @@ public class Config {
 			if (validityDays == null) {
 				validityDays = defaults.getValidityDays();
 			}
-			
-            if (useEllipticCurves == null) {
-                useEllipticCurves = defaults.isUseEllipticCurves();
-            }
             
             if (ellipticCurve == null) {
                 ellipticCurve = defaults.getEllipticCurve();
@@ -544,7 +505,6 @@ public class Config {
 
 	public interface KeyGenParameters {
 	    Integer getKeysize();
-	    Boolean getUseEllipticCurves();
 	    String getEllipticCurve();
 
 	}
