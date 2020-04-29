@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>search-guard-tlstool</artifactId>
-  <version>1.8-SNAPSHOT</version>
+  <version>1.9-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>search-guard-tlstool</name>
@@ -26,6 +26,9 @@
   </licenses>
 
   <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.release>8</maven.compiler.release>
     <bc.version>1.61</bc.version>
     <commons.cli.version>1.4</commons.cli.version>
     <commons.io.version>2.6</commons.io.version>
@@ -138,6 +141,27 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+          <locale>en</locale>
+          <doclint>none</doclint>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <additionalparam>-Xdoclint:none</additionalparam>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
