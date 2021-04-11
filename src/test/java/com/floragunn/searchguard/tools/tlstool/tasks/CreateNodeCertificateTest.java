@@ -38,7 +38,9 @@ import com.floragunn.searchguard.tools.tlstool.Config;
 import com.floragunn.searchguard.tools.tlstool.Context;
 import com.floragunn.searchguard.tools.tlstool.FileOutput;
 import com.floragunn.searchguard.tools.tlstool.ToolException;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class CreateNodeCertificateTest {
 	@BeforeClass
@@ -66,6 +68,7 @@ public class CreateNodeCertificateTest {
 		nodeConfig.setDn("CN=node99.example.com,OU=QA");
 		nodeConfig.setDns(Lists.newArrayList("node99.example.com", "*.node99.example.com"));
 		nodeConfig.setIp(Lists.newArrayList("10.8.0.123"));
+		nodeConfig.setOtherName(Lists.newArrayList(Maps.newHashMap(ImmutableMap.of("oid", "2.5.4.3", "utf8", "node99.example.com"))));
 		nodeConfig.setKeysize(2048);
 		nodeConfig.setValidityDays(10);
 		nodeConfig.setOid(Lists.newArrayList("3.1.4"));
@@ -101,7 +104,7 @@ public class CreateNodeCertificateTest {
 
 		X509CertificateHolder cert = (X509CertificateHolder) fileEntry.getEntries().get(0);
 
-		Assert.assertEquals("2:node99.example.com;2:*.node99.example.com;7:10.8.0.123;",
+		Assert.assertEquals("0:[2.5.4.3, [0]node99.example.com];2:node99.example.com;2:*.node99.example.com;7:10.8.0.123;",
 				getSubjectAlternativeNameInfo(cert));
 
 		fileEntry = fileOutput.getEntryByFileName("test-node_http.pem");
@@ -130,6 +133,7 @@ public class CreateNodeCertificateTest {
 		nodeConfig.setDn("CN=node99.example.com,OU=QA");
 		nodeConfig.setDns(Lists.newArrayList("node99.example.com", "*.node99.example.com"));
 		nodeConfig.setIp(Lists.newArrayList("10.8.0.123"));
+		nodeConfig.setOtherName(Lists.newArrayList(Maps.newHashMap(ImmutableMap.of("oid", "2.5.4.3", "utf8", "node99.example.com"))));
 		nodeConfig.setKeysize(2048);
 		nodeConfig.setValidityDays(10);
 		nodeConfig.setOid(Lists.newArrayList("3.1.4"));

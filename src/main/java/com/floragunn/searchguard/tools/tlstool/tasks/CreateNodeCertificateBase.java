@@ -21,8 +21,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.DERUTF8String;
 import org.bouncycastle.asn1.x509.GeneralName;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -54,6 +59,13 @@ public abstract class CreateNodeCertificateBase extends Task {
 		if (includeOid && !Strings.isNullOrEmpty(ctx.getConfig().getDefaults().getNodeOid())) {
 			subjectAlternativeNameList
 					.add(new GeneralName(GeneralName.registeredID, ctx.getConfig().getDefaults().getNodeOid()));
+		}
+
+		if (nodeConfig.getOtherName() != null) {
+			for (Map<String, String> otherName : nodeConfig.getOtherName()) {
+				ASN1Encodable[] otherNameSeq = { new ASN1ObjectIdentifier(otherName.get("oid")), new DERTaggedObject(true, 0, new DERUTF8String(otherName.get("utf8"))) };
+				subjectAlternativeNameList.add(new GeneralName(GeneralName.otherName, new DERSequence(otherNameSeq)));
+			}
 		}
 
 		if (nodeConfig.getDns() != null) {
