@@ -18,6 +18,7 @@
 package com.floragunn.searchguard.tools.tlstool;
 
 import java.util.List;
+import java.util.Map;
 
 public class Config {
 	
@@ -333,6 +334,7 @@ public class Config {
 		private List<String> dns;
 		private List<String> ip;
 		private List<String> oid;
+		private List<Map<String, String>> otherName;
 		private Integer keysize;
 		private String pkPassword;
 		private Integer validityDays;
@@ -369,6 +371,12 @@ public class Config {
 		}
 		public void setOid(List<String> oid) {
 			this.oid = oid;
+		}
+		public List<Map<String, String>> getOtherName() {
+			return otherName;
+		}
+		public void setOtherName(List<Map<String, String>> otherName) {
+			this.otherName = otherName;
 		}
 		public Integer getKeysize() {
 			return keysize;
