@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>search-guard-tlstool</artifactId>
-  <version>1.7-SNAPSHOT</version>
+  <version>1.9-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>search-guard-tlstool</name>
@@ -26,12 +26,15 @@
   </licenses>
 
   <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.release>8</maven.compiler.release>
     <bc.version>1.61</bc.version>
     <commons.cli.version>1.4</commons.cli.version>
     <commons.io.version>2.6</commons.io.version>
     <commons.text.version>1.6</commons.text.version>
     <log4j.version>2.11.1</log4j.version>
-    <jackson.version>2.9.10.1</jackson.version>
+    <jackson.version>2.9.10.8</jackson.version>
     <jackson-yaml.version>2.9.10</jackson-yaml.version>
     <guava.version>25.1-jre</guava.version>
     <sgtlstool.descriptor>${basedir}/src/main/assemblies/sgtlstool-standalone.xml</sgtlstool.descriptor>
