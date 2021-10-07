@@ -6,13 +6,13 @@
 
 
 searchguard.ssl.transport.pemcert_filepath: node2.pem
-searchguard.ssl.transport.pemkey_filepath: node2.key
+searchguard.ssl.transport.pemkey_filepath: node2-key.pem
 searchguard.ssl.transport.pemtrustedcas_filepath: root-ca.pem
 searchguard.ssl.transport.enforce_hostname_verification: false
 searchguard.ssl.transport.resolve_hostname: false
 searchguard.ssl.http.enabled: true
 searchguard.ssl.http.pemcert_filepath: node2_http.pem
-searchguard.ssl.http.pemkey_filepath: node2_http.key
+searchguard.ssl.http.pemkey_filepath: node2_http-key.pem
 searchguard.ssl.http.pemtrustedcas_filepath: root-ca.pem
 searchguard.nodes_dn:
 - CN=node1.example.com,OU=Ops,O=Example Com\, Inc.,DC=example,DC=com

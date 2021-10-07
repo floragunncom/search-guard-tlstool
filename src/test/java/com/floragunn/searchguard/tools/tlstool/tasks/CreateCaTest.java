@@ -79,8 +79,8 @@ public class CreateCaTest {
 		fileEntry = fileOutput.getEntryByFileName("signing-ca.pem");
 		Assert.assertEquals("cn=signing.ca.example.com,ou=QA", ((X509CertificateHolder) fileEntry.getEntries().get(0)).getSubject().toString());
 
-		Assert.assertNotNull(fileOutput.getEntryByFileName("root-ca.key"));
-		Assert.assertNotNull(fileOutput.getEntryByFileName("signing-ca.key"));
+		Assert.assertNotNull(fileOutput.getEntryByFileName("root-ca-key.pem"));
+		Assert.assertNotNull(fileOutput.getEntryByFileName("signing-ca-key.pem"));
 	}
 	
     @Test
@@ -130,8 +130,8 @@ public class CreateCaTest {
         fileEntry = fileOutput.getEntryByFileName("signing-ca.pem");
         Assert.assertEquals("cn=signing.ca.example.com,ou=QA", ((X509CertificateHolder) fileEntry.getEntries().get(0)).getSubject().toString());
 
-        Assert.assertNotNull(fileOutput.getEntryByFileName("root-ca.key"));
-        Assert.assertNotNull(fileOutput.getEntryByFileName("signing-ca.key"));
+        Assert.assertNotNull(fileOutput.getEntryByFileName("root-ca-key.pem"));
+        Assert.assertNotNull(fileOutput.getEntryByFileName("signing-ca-key.pem"));
     }
     
     @Test
@@ -182,8 +182,8 @@ public class CreateCaTest {
         fileEntry = fileOutput.getEntryByFileName("signing-ca.pem");
         Assert.assertEquals("cn=signing.ca.example.com,ou=QA", ((X509CertificateHolder) fileEntry.getEntries().get(0)).getSubject().toString());
 
-        Assert.assertNotNull(fileOutput.getEntryByFileName("root-ca.key"));
-        Assert.assertNotNull(fileOutput.getEntryByFileName("signing-ca.key"));
+        Assert.assertNotNull(fileOutput.getEntryByFileName("root-ca-key.pem"));
+        Assert.assertNotNull(fileOutput.getEntryByFileName("signing-ca-key.pem"));
     }
     
     @Test
@@ -234,7 +234,7 @@ public class CreateCaTest {
         fileEntry = fileOutput.getEntryByFileName("signing-ca.pem");
         Assert.assertEquals("cn=signing.ca.example.com,ou=QA", ((X509CertificateHolder) fileEntry.getEntries().get(0)).getSubject().toString());
 
-        Assert.assertNotNull(fileOutput.getEntryByFileName("root-ca.key"));
-        Assert.assertNotNull(fileOutput.getEntryByFileName("signing-ca.key"));
+        Assert.assertNotNull(fileOutput.getEntryByFileName("root-ca-key.pem"));
+        Assert.assertNotNull(fileOutput.getEntryByFileName("signing-ca-key.pem"));
     }
 }

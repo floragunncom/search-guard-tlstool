@@ -41,15 +41,15 @@
   </properties>
 
   <scm>
-    <url>https://github.com/floragunncom/search-guard-tlstool</url>
-    <connection>scm:git:git@github.com:floragunncom/search-guard-tlstool.git</connection>
-    <developerConnection>scm:git:git@github.com:floragunncom/search-guard-tlstool.git</developerConnection>
+    <url>https://git.floragunn.com/search-guard/search-guard-tlstool</url>
+    <connection>scm:git:git@git.floragunn.com:search-guard/search-guard-tlstool.git</connection>
+    <developerConnection>scm:git:git@git.floragunn.com:search-guard/search-guard-tlstool.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
-    <system>GitHub</system>
-    <url>https://github.com/floragunncom/search-guard-tlstool/issues</url>
+    <system>GitLab</system>
+    <url>https://git.floragunn.com/search-guard/search-guard-tlstool/-/issues</url>
   </issueManagement>
 
   <dependencies>

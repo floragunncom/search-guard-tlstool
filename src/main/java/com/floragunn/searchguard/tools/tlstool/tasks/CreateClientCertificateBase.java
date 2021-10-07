@@ -17,21 +17,19 @@
 
 package com.floragunn.searchguard.tools.tlstool.tasks;
 
-import java.io.File;
 
 import com.floragunn.searchguard.tools.tlstool.Config;
 import com.floragunn.searchguard.tools.tlstool.Context;
 
 public abstract class CreateClientCertificateBase extends Task {
 	protected final Config.Client clientConfig;
-	protected File privateKeyFile;
 
 	public CreateClientCertificateBase(Context ctx, Config.Client clientConfig) {
 		super(ctx);
 		this.clientConfig = clientConfig;
 	}
 	
-	protected String createPasswordInfo(File privateKeyFile, String privateKeyPassword) {
+	protected String createPasswordInfo(String privateKeyPassword) {
 		return clientConfig.getDn() + " Password: " + privateKeyPassword + "\n";
 	}
 

@@ -42,24 +42,16 @@ import com.google.common.base.Ascii;
 public class FileOutput {
 	private static final Logger log = LogManager.getLogger(FileOutput.class);
 
-	private Map<File, FileEntry> fileEntryMap = new HashMap<>();
-	private List<FileEntry> fileEntries = new ArrayList<>();
+	private final Map<File, FileEntry> fileEntryMap = new HashMap<>();
+	private final List<FileEntry> fileEntries = new ArrayList<>();
 	private final Context ctx;
 
 	public FileOutput(Context ctx) {
 		this.ctx = ctx;
 	}
 
-	public void add(String fileName, Object... entries) {
-		add(new File(fileName), null, entries);
-	}
-
 	public void add(File file, Object... entries) {
 		add(file, null, entries);
-	}
-
-	public void addEncrypted(String fileName, String password, Object... entries) {
-		addEncrypted(new File(fileName), password, entries);
 	}
 
 	public void addEncrypted(File file, String password, Object... entries) {
@@ -68,10 +60,6 @@ public class FileOutput {
 
 	public void append(File file, Object... entries) {
 		append(file, null, entries);
-	}
-
-	public void appendEncrypted(File file, String password, Object... entries) {
-		append(file, password, entries);
 	}
 
 	public FileEntry getEntryByFileName(String fileName) {

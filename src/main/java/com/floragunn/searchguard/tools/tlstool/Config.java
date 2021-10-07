@@ -17,6 +17,8 @@
 
 package com.floragunn.searchguard.tools.tlstool;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.util.List;
 
 public class Config {
@@ -292,6 +294,13 @@ public class Config {
 			public String getFile() {
 				return file;
 			}
+
+			public String getPrivateKeyFile() {
+				String extension = FilenameUtils.getExtension(file);
+				String withoutExtension = FilenameUtils.removeExtension(file);
+				return withoutExtension + "-key." + extension;
+			}
+
 			public void setFile(String file) {
 				this.file = file;
 			}

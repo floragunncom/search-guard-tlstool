@@ -1,10 +1,10 @@
 /*
  * Copyright 2017-2018 floragunn GmbH
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -12,10 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  */
 
 package com.floragunn.searchguard.tools.tlstool;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.floragunn.searchguard.tools.tlstool.tasks.*;
+import com.google.common.base.Strings;
+import org.apache.commons.cli.*;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,30 +34,7 @@ import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Configurator;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.floragunn.searchguard.tools.tlstool.tasks.CreateCa;
-import com.floragunn.searchguard.tools.tlstool.tasks.CreateClientCertificate;
-import com.floragunn.searchguard.tools.tlstool.tasks.CreateClientCsr;
-import com.floragunn.searchguard.tools.tlstool.tasks.CreateNodeCertificate;
-import com.floragunn.searchguard.tools.tlstool.tasks.CreateNodeCsr;
-import com.floragunn.searchguard.tools.tlstool.tasks.LoadCa;
-import com.floragunn.searchguard.tools.tlstool.tasks.Task;
-import com.floragunn.searchguard.tools.tlstool.tasks.Validate;
-import com.google.common.base.Strings;
+import static java.util.Optional.ofNullable;
 
 public class SearchGuardTlsTool {
 
@@ -108,7 +96,8 @@ public class SearchGuardTlsTool {
 
 			if (Strings.isNullOrEmpty(configOptionValue)) {
 				throw new ToolException(
-						"No config specified. In order to use this tool, you always need to specify a config file using the -c option. To create a config file, copy the file config/template.yml and edit it to match your needs.");
+						"No config specified. In order to use this tool, you always need to specify a config file using the -c option. " +
+								"To create a config file, copy the file config/template.yml and edit it to match your needs.");
 			}
 
 			File configFile = new File(configOptionValue);
@@ -129,11 +118,14 @@ public class SearchGuardTlsTool {
 
 	private void run() throws ToolException {
 		if (!commandLine.hasOption("ca") && !commandLine.hasOption("crt") && !commandLine.hasOption("csr")) {
-			System.out.println(
-					"In order to use sgtlstool, you have to use at least one of these parameters:\n\n--create-ca - Creates a new CA\n--create-cert - Creates new certificates\n--create-csr - Creates certificate signing requests.\n");
+			log.info(
+					"In order to use sgtlstool, you have to use at least one of these parameters:\n\n" +
+							"--create-ca - Creates a new CA\n" +
+							"--create-cert - Creates new certificates\n" +
+							"--create-csr - Creates certificate signing requests.\n");
 
 			if (!commandLine.hasOption("c")) {
-				System.out.println(
+				log.info(
 						"Furthermore, you need to specify a config file using the -c option. To create a config file, copy the file config/template.yml and edit it to match your needs.\n");
 			}
 			new HelpFormatter().printHelp("sgtlstool.sh", options, true);
@@ -182,30 +174,15 @@ public class SearchGuardTlsTool {
 		}
 
 		if (commandLine.hasOption("csr")) {
-			if (config.getNodes() != null) {
-				for (Config.Node nodeConfig : config.getNodes()) {
-					tasks.add(new CreateNodeCsr(ctx, nodeConfig));
-				}
-			}
-
-			if (config.getClients() != null) {
-				for (Config.Client clientConfig : config.getClients()) {
-					tasks.add(new CreateClientCsr(ctx, clientConfig));
-				}
-			}
-
+			ofNullable(config.getNodes())
+					.ifPresent(nodes -> nodes.forEach(nodeConfig -> tasks.add(new CreateNodeCsr(ctx, nodeConfig))));
+			ofNullable(config.getClients())
+					.ifPresent(clients -> clients.forEach(clientConfig -> tasks.add(new CreateClientCsr(ctx, clientConfig))));
 		} else if (commandLine.hasOption("crt")) {
-			if (config.getNodes() != null) {
-				for (Config.Node nodeConfig : config.getNodes()) {
-					tasks.add(new CreateNodeCertificate(ctx, nodeConfig));
-				}
-			}
-
-			if (config.getClients() != null) {
-				for (Config.Client clientConfig : config.getClients()) {
-					tasks.add(new CreateClientCertificate(ctx, clientConfig));
-				}
-			}
+			ofNullable(config.getNodes())
+					.ifPresent(nodes -> nodes.forEach(nodeConfig -> tasks.add(new CreateNodeCertificate(ctx, nodeConfig))));
+			ofNullable(config.getClients())
+					.ifPresent(clients -> clients.forEach(clientConfig -> tasks.add(new CreateClientCertificate(ctx, clientConfig))));
 		}
 
 		for (Task task : tasks) {

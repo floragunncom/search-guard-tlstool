@@ -72,9 +72,8 @@ public abstract class Task {
 
 	public abstract void run() throws ToolException;
 
-	protected KeyPair generateKeyPair(KeyGenParameters parameters) throws ToolException {
+	protected KeyPair generateKeyPair(KeyGenParameters parameters) {
 		try {
-
 		    KeyPairGenerator generator;
 		    if(ctx.getConfig().getDefaults().isUseEllipticCurves()) {
 		        log.debug("Create {} with EC ({})", parameters.getClass().getSimpleName(), parameters.getEllipticCurve());
@@ -87,24 +86,14 @@ public abstract class Task {
 		        generator.initialize(parameters.getKeysize());
 		    }
 
-			KeyPair keyPair = generator.generateKeyPair();
-			return keyPair;
-
+			return generator.generateKeyPair();
 		} catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	protected void addOutputFile(String fileName, Object... entries) {
-		ctx.getFileOutput().add(fileName, entries);
-	}
-
 	protected void addOutputFile(File file, Object... entries) {
 		ctx.getFileOutput().add(file, entries);
-	}
-
-	protected void addEncryptedOutputFile(String fileName, String password, Object... entries) {
-		ctx.getFileOutput().addEncrypted(fileName, password, entries);
 	}
 
 	protected void addEncryptedOutputFile(File file, String password, Object... entries) {
@@ -113,10 +102,6 @@ public abstract class Task {
 
 	protected void appendOutputFile(File file, Object... entries) {
 		ctx.getFileOutput().append(file, entries);
-	}
-
-	protected void appendEnryptedOutputFile(File file, String password, Object... entries) {
-		ctx.getFileOutput().appendEncrypted(file, password, entries);
 	}
 
 	protected boolean checkFileOverwrite(String artifact, String dn, File... files) {

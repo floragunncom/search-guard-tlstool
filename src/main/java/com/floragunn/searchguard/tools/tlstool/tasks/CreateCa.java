@@ -17,11 +17,9 @@
 
 package com.floragunn.searchguard.tools.tlstool.tasks;
 
-import java.io.File;
-import java.math.BigInteger;
-import java.security.KeyPair;
-import java.util.Date;
-
+import com.floragunn.searchguard.tools.tlstool.Config;
+import com.floragunn.searchguard.tools.tlstool.Context;
+import com.floragunn.searchguard.tools.tlstool.ToolException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -36,16 +34,17 @@ import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
-import com.floragunn.searchguard.tools.tlstool.Config;
-import com.floragunn.searchguard.tools.tlstool.Context;
-import com.floragunn.searchguard.tools.tlstool.ToolException;
+import java.io.File;
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.util.Date;
 
 public class CreateCa extends Task {
 
 	private static final Logger log = LogManager.getLogger(CreateCa.class);
 
-	private Config.Ca.Certificate rootCertificateConfig;
-	private Config.Ca.Certificate signingCertificateConfig;
+	private final Config.Ca.Certificate rootCertificateConfig;
+	private final Config.Ca.Certificate signingCertificateConfig;
 
 	public CreateCa(Context ctx, Config.Ca caConfig) throws ToolException {
 		super(ctx);
@@ -61,12 +60,11 @@ public class CreateCa extends Task {
 		}
 
 		this.signingCertificateConfig = caConfig.getIntermediate();
-
 	}
 
 	@Override
 	public void run() throws ToolException {
-		File rootKeyFile = getConfiguredFile(rootCertificateConfig.getFile(), "root-ca.key", "key");
+		File rootKeyFile = getConfiguredFile(rootCertificateConfig.getPrivateKeyFile(), "root-ca-key.pem", "pem");
 		File rootCertFile = getConfiguredFile(rootCertificateConfig.getFile(), "root-ca.pem", "pem");
 		File readmeFile = getConfiguredFile(rootCertificateConfig.getFile(), "root-ca.readme", "readme");
 
@@ -91,7 +89,7 @@ public class CreateCa extends Task {
 		addEncryptedOutputFile(rootKeyFile, rootPrivateKeyPassword, rootCaKeyPair.getPrivate());
 
 		if (signingCertificateConfig != null) {
-			File signingKeyFile = getConfiguredFile(signingCertificateConfig.getFile(), "signing-ca.key", "key");
+			File signingKeyFile = getConfiguredFile(signingCertificateConfig.getPrivateKeyFile(), "signing-ca-key.pem", "pem");
 			File signingCertFile = getConfiguredFile(signingCertificateConfig.getFile(), "signing-ca.pem", "pem");
 
 			if (signingKeyFile.exists()) {
@@ -137,7 +135,7 @@ public class CreateCa extends Task {
 			result.append("has ");
 		}
 
-		result.append("been sucessfully created.\n");
+		result.append("been successfully created.\n");
 
 		if (isPasswordAutoGenerationEnabled(rootCertificateConfig.getPkPassword()) || (signingCertificateConfig != null
 				&& isPasswordAutoGenerationEnabled(signingCertificateConfig.getPkPassword()))) {
@@ -171,10 +169,9 @@ public class CreateCa extends Task {
 					.addExtension(Extension.keyUsage, true,
 							new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyCertSign | KeyUsage.cRLSign));
 
-			X509CertificateHolder cert = builder
+			return builder
 					.build(new JcaContentSignerBuilder(ctx.getConfig().getDefaults().getSignatureAlgorithm())
 							.setProvider(ctx.getSecurityProvider()).build(keyPair.getPrivate()));
-			return cert;
 		} catch (CertIOException | OperatorCreationException e) {
 			throw new ToolException("Error while composing certificate", e);
 		}
@@ -205,10 +202,9 @@ public class CreateCa extends Task {
 					.addExtension(Extension.keyUsage, true,
 							new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyCertSign | KeyUsage.cRLSign));
 
-			X509CertificateHolder cert = builder
+			return builder
 					.build(new JcaContentSignerBuilder(ctx.getConfig().getDefaults().getSignatureAlgorithm())
 							.setProvider(ctx.getSecurityProvider()).build(caKey.getPrivate()));
-			return cert;
 		} catch (CertIOException | OperatorCreationException e) {
 			throw new ToolException("Error while composing certificate", e);
 		}

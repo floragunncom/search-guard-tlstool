@@ -37,7 +37,7 @@ import com.floragunn.searchguard.tools.util.EsNodeConfig;
 import com.google.common.base.Strings;
 
 public abstract class CreateNodeCertificateBase extends Task {
-	private Config.Node nodeConfig;
+	private final Config.Node nodeConfig;
 	protected final EsNodeConfig nodeResultConfig = new EsNodeConfig();
 	protected File privateKeyFile;
 	protected File configSnippetFile;
@@ -92,9 +92,7 @@ public abstract class CreateNodeCertificateBase extends Task {
 	}
 
 	protected String createConfigSnippet() throws ToolException {
-
 		try {
-
 			nodeResultConfig.setAuthczAdminDn(collectAdminDn());
 
 			if (!Strings.isNullOrEmpty(ctx.getConfig().getDefaults().getNodeOid())) {
@@ -117,7 +115,6 @@ public abstract class CreateNodeCertificateBase extends Task {
 	}
 
 	private List<String> collectFilteredNodesDn() throws ToolException {
-
 		List<String> preconfiguredNodesDn = ctx.getConfig().getDefaults().getNodesDn();
 
 		if (preconfiguredNodesDn != null) {

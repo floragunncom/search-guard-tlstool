@@ -97,7 +97,7 @@ public class CreateNodeCertificateTest {
 				((X509CertificateHolder) fileEntry.getEntries().get(1)).getSubject().toString());
 		Assert.assertEquals(2, fileEntry.getEntries().size());
 
-		Assert.assertNotNull(fileOutput.getEntryByFileName("test-node.key"));
+		Assert.assertNotNull(fileOutput.getEntryByFileName("test-node-key.pem"));
 
 		X509CertificateHolder cert = (X509CertificateHolder) fileEntry.getEntries().get(0);
 
@@ -111,7 +111,7 @@ public class CreateNodeCertificateTest {
 				((X509CertificateHolder) fileEntry.getEntries().get(1)).getSubject().toString());
 		Assert.assertEquals(2, fileEntry.getEntries().size());
 
-		Assert.assertNotNull(fileOutput.getEntryByFileName("test-node_http.key"));
+		Assert.assertNotNull(fileOutput.getEntryByFileName("test-node_http-key.pem"));
 	}
 
 	@Test
@@ -158,14 +158,14 @@ public class CreateNodeCertificateTest {
 				((X509CertificateHolder) fileEntry.getEntries().get(0)).getSubject().toString());
 		Assert.assertEquals(1, fileEntry.getEntries().size());
 
-		Assert.assertNotNull(fileOutput.getEntryByFileName("test-node.key"));
+		Assert.assertNotNull(fileOutput.getEntryByFileName("test-node-key.pem"));
 
 		fileEntry = fileOutput.getEntryByFileName("test-node_http.pem");
 		Assert.assertEquals("cn=node99.example.com,ou=QA",
 				((X509CertificateHolder) fileEntry.getEntries().get(0)).getSubject().toString());
 		Assert.assertEquals(1, fileEntry.getEntries().size());
 
-		Assert.assertNotNull(fileOutput.getEntryByFileName("test-node_http.key"));
+		Assert.assertNotNull(fileOutput.getEntryByFileName("test-node_http-key.pem"));
 	}
 
 	private String getSubjectAlternativeNameInfo(X509CertificateHolder cert) {

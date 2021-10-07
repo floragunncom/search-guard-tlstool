@@ -31,8 +31,8 @@ import com.floragunn.searchguard.tools.tlstool.ToolException;
 public class LoadCa extends Task {
 	private static final Logger log = LogManager.getLogger(LoadCa.class);
 
-	private Config.Ca.Certificate signingCertificateConfig;
-	private String fileNameBase;
+	private final Config.Ca.Certificate signingCertificateConfig;
+	private final String fileNameBase;
 
 	public LoadCa(Context ctx, Config.Ca caConfig) throws ToolException {
 		super(ctx);
@@ -62,7 +62,7 @@ public class LoadCa extends Task {
 
 	@Override
 	public void run() throws ToolException {
-		File keyFile = getConfiguredFile(signingCertificateConfig.getFile(), fileNameBase + ".key", "key");
+		File keyFile = getConfiguredFile(signingCertificateConfig.getPrivateKeyFile(), fileNameBase + "-key.pem", "pem");
 		File certFile = getConfiguredFile(signingCertificateConfig.getFile(), fileNameBase + ".pem", "pem");
 
 		ctx.setSigningPrivateKey(readObjectFromPem(keyFile, PrivateKey.class, signingCertificateConfig.getPkPassword()));

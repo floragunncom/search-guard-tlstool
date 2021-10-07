@@ -6,14 +6,14 @@
 
 
 searchguard.ssl.transport.pemcert_filepath: node3.pem
-searchguard.ssl.transport.pemkey_filepath: node3.key
+searchguard.ssl.transport.pemkey_filepath: node3-key.pem
 searchguard.ssl.transport.pemkey_password: secret
 searchguard.ssl.transport.pemtrustedcas_filepath: root-ca.pem
 searchguard.ssl.transport.enforce_hostname_verification: false
 searchguard.ssl.transport.resolve_hostname: false
 searchguard.ssl.http.enabled: true
 searchguard.ssl.http.pemcert_filepath: node3_http.pem
-searchguard.ssl.http.pemkey_filepath: node3_http.key
+searchguard.ssl.http.pemkey_filepath: node3_http-key.pem
 searchguard.ssl.http.pemkey_password: secret
 searchguard.ssl.http.pemtrustedcas_filepath: root-ca.pem
 searchguard.nodes_dn:
