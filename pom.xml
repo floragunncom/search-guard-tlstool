@@ -33,7 +33,7 @@
     <commons.cli.version>1.4</commons.cli.version>
     <commons.io.version>2.6</commons.io.version>
     <commons.text.version>1.6</commons.text.version>
-    <log4j.version>2.11.1</log4j.version>
+    <log4j.version>2.16.0</log4j.version>
     <jackson.version>2.9.10.4</jackson.version>
     <jackson-yaml.version>2.9.10</jackson-yaml.version>
     <guava.version>25.1-jre</guava.version>
