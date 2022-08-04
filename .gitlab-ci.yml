@@ -1,0 +1,92 @@
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+      when: never
+    - when: always
+
+variables:
+  SG_BUILD_IMAGE: "floragunncom/ci-pipeline-focal-mvn38-java17:0.1.0"
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+  MAVEN_CLI_OPTS: "--batch-mode -s settings.xml -q -U"
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  GIT_DEPTH: 10
+  
+default:
+  image: $SG_BUILD_IMAGE
+  tags:
+    - aws-runner
+  interruptible: true
+  timeout: 15m
+  before_script:
+    - |
+        echo "Executing default before_script for: $CI_JOB_NAME in stage: $CI_JOB_STAGE because of: $CI_PIPELINE_SOURCE"
+        echo "CI_COMMIT_BRANCH: $CI_COMMIT_BRANCH"
+        echo "CI_COMMIT_REF_NAME: $CI_COMMIT_REF_NAME"
+        echo "CI_COMMIT_TAG: $CI_COMMIT_TAG"
+
+        if [ -z "$CI_COMMIT_TAG" ]; then 
+          echo "No CI_COMMIT_TAG set";
+        else
+          # $CI_COMMIT_TAG: 1.9.0
+          echo "CI_COMMIT_TAG $CI_COMMIT_TAG"
+        fi
+
+stages:
+  - build
+  - test
+  - release
+
+build_and_deploy_snapshot:
+  allow_failure: false
+  stage: build
+  script:
+    - | 
+       SNAPSHOT_REVISION="$CI_COMMIT_REF_NAME-SNAPSHOT"
+       mvn -Drevision=$SNAPSHOT_REVISION $MAVEN_CLI_OPTS -DskipTests clean deploy
+       echo "SNAPSHOT_REVISION=$SNAPSHOT_REVISION" > snapshot.env
+  artifacts:
+    when: on_success
+    paths:
+      - "target/releases/"
+      - "snapshot.env"
+    expire_in: 12h
+    reports:
+      dotenv: snapshot.env
+  cache:
+    key: mavenrepo_tlstool
+    paths:
+      - .m2/repository
+
+unit_tests:
+  stage: test
+  interruptible: true
+  script:
+    - UUID=$(uuidgen)
+    - echo $UUID
+    - mvn $MAVEN_CLI_OPTS -Drevision=$UUID-SNAPSHOT clean install -DskipTests
+    - mvn $MAVEN_CLI_OPTS -Drevision=$UUID-SNAPSHOT test
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - "*/target/surefire-reports/TEST-*.xml"
+        - "*/target/failsafe-reports/TEST-*.xml"
+    expire_in: 1 week
+  cache:
+    key: mavenrepo_tlstool
+    paths:
+      - .m2/repository
+    policy: pull
+
+deploy_release:
+  allow_failure: false
+  interruptible: false
+  stage: release
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^[0-9]\.[0-9]\.[0-9].*/'
+  script:
+    - ./ci/setup_gpg.sh
+    - |
+      echo "Deploying Release to production repo as $CI_COMMIT_TAG"
+      mvn deploy $MAVEN_CLI_OPTS -DskipTests -Prelease -Drevision=$CI_COMMIT_TAG

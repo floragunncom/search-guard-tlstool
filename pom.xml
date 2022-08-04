@@ -4,7 +4,7 @@
 
   <groupId>com.floragunn</groupId>
   <artifactId>search-guard-tlstool</artifactId>
-  <version>1.9-SNAPSHOT</version>
+  <version>${revision}</version>
   <packaging>jar</packaging>
 
   <name>search-guard-tlstool</name>
@@ -21,6 +21,7 @@
   </licenses>
 
   <properties>
+    <revision>master-SNAPSHOT</revision>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.release>8</maven.compiler.release>
@@ -35,19 +36,23 @@
 
     <junit.version>4.13.2</junit.version>
     <sgtlstool.descriptor>${basedir}/src/main/assemblies/sgtlstool-standalone.xml</sgtlstool.descriptor>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <dependency.locations.enabled>false</dependency.locations.enabled>
   </properties>
 
-  <scm>
-    <url>https://github.com/floragunncom/search-guard-tlstool</url>
-    <connection>scm:git:git@github.com:floragunncom/search-guard-tlstool.git</connection>
-    <developerConnection>scm:git:git@github.com:floragunncom/search-guard-tlstool.git</developerConnection>
-    <tag>HEAD</tag>
-  </scm>
+  <distributionManagement>
+    <repository>
+      <id>release</id>
+      <name>Release repository</name>
+      <url>https://maven.search-guard.com:443/search-guard-tlstool</url>
+    </repository>
 
-  <issueManagement>
-    <system>GitHub</system>
-    <url>https://github.com/floragunncom/search-guard-tlstool/issues</url>
-  </issueManagement>
+    <snapshotRepository>
+      <id>snapshot</id>
+      <name>Snapshot repository</name>
+      <url>https://maven.search-guard.com:443/search-guard-tlstool-snapshot</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <dependencies>
     <dependency>
@@ -249,4 +254,21 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
