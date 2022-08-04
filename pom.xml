@@ -2,12 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>com.floragunn</groupId>
-    <artifactId>search-guard-parent</artifactId>
-    <version>6.22.1</version>
-  </parent>
-
+  <groupId>com.floragunn</groupId>
   <artifactId>search-guard-tlstool</artifactId>
   <version>1.9-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -29,14 +24,16 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.release>8</maven.compiler.release>
-    <bc.version>1.61</bc.version>
-    <commons.cli.version>1.4</commons.cli.version>
-    <commons.io.version>2.6</commons.io.version>
-    <commons.text.version>1.6</commons.text.version>
-    <log4j.version>2.11.1</log4j.version>
-    <jackson.version>2.9.10.8</jackson.version>
-    <jackson-yaml.version>2.9.10</jackson-yaml.version>
-    <guava.version>25.1-jre</guava.version>
+    <bc.version>1.70</bc.version>
+    <commons.cli.version>1.5.0</commons.cli.version>
+    <commons.io.version>2.11.0</commons.io.version>
+    <commons.text.version>1.9</commons.text.version>
+    <log4j.version>2.18.0</log4j.version>
+    <jackson.version>2.13.3</jackson.version>
+    <jackson-yaml.version>2.13.3</jackson-yaml.version>
+    <guava.version>31.1-jre</guava.version>
+
+    <junit.version>4.13.2</junit.version>
     <sgtlstool.descriptor>${basedir}/src/main/assemblies/sgtlstool-standalone.xml</sgtlstool.descriptor>
   </properties>
 
@@ -118,6 +115,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>    
   </dependencies>
@@ -159,6 +157,93 @@
             <goals>
               <goal>single</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <configuration>
+              <outputDirectory>target/releases/</outputDirectory>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <shadedClassifierName>shaded</shadedClassifierName>
+              <!--
+              minimize set to true breaks log4j
+              edwgiz transformer does not solve it
+              -->
+              <minimizeJar>false</minimizeJar>
+              <transformers>
+                <transformer
+                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                <transformer
+                        implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer" />
+                <transformer
+                        implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer" />
+                <transformer
+                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>com.floragunn.searchguard.tools.tlstool.SearchGuardTlsTool</mainClass>
+                </transformer>
+
+              </transformers>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>module-info.class</exclude>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.skife.maven</groupId>
+        <artifactId>really-executable-jar-maven-plugin</artifactId>
+        <version>1.5.0</version>
+        <configuration>
+          <flags>-Xmx1G</flags>
+          <programFile>tlstool.sh</programFile>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>really-executable-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.8</version>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>${basedir}/target/releases/tlstool.sh</file>
+                  <type>sh</type>
+                </artifact>
+              </artifacts>
+            </configuration>
           </execution>
         </executions>
       </plugin>
