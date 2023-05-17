@@ -28,10 +28,10 @@
     <bc.version>1.70</bc.version>
     <commons.cli.version>1.5.0</commons.cli.version>
     <commons.io.version>2.11.0</commons.io.version>
-    <commons.text.version>1.9</commons.text.version>
-    <log4j.version>2.18.0</log4j.version>
-    <jackson.version>2.13.3</jackson.version>
-    <jackson-yaml.version>2.13.3</jackson-yaml.version>
+    <commons.text.version>1.10.0</commons.text.version>
+    <log4j.version>2.20.0</log4j.version>
+    <jackson.version>2.15.1</jackson.version>
+    <jackson-yaml.version>2.15.1</jackson-yaml.version>
     <guava.version>31.1-jre</guava.version>
 
     <junit.version>4.13.2</junit.version>
