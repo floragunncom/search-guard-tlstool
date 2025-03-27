@@ -32,7 +32,7 @@
     <log4j.version>2.24.2</log4j.version>
     <jackson.version>2.18.3</jackson.version>
     <jackson-yaml.version>2.18.3</jackson-yaml.version>
-    <guava.version>33.3.1-jre</guava.version>
+    <guava.version>33.4.6-jre</guava.version>
 
     <junit.version>4.13.2</junit.version>
     <sgtlstool.descriptor>${basedir}/src/main/assemblies/sgtlstool-standalone.xml</sgtlstool.descriptor>
