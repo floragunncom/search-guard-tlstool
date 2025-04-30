@@ -30,7 +30,7 @@
     <commons.io.version>2.19.0</commons.io.version>
     <commons.text.version>1.13.1</commons.text.version>
     <log4j.version>2.24.3</log4j.version>
-    <jackson.version>2.18.3</jackson.version>
+    <jackson.version>2.19.0</jackson.version>
     <jackson-yaml.version>2.18.3</jackson-yaml.version>
     <guava.version>33.4.8-jre</guava.version>
 
