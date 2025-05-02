@@ -20,14 +20,16 @@
           --minimum-severity-level LOW \
           --fail-on-sast-scan \
           --fail-on-iac-scan \
-          --plain-output \
-          --base-branch ${AIKIDO_BASE_BRANCH}"
+          --plain-output"
 
         if [ "${CI_COMMIT_REF_NAME}" = "${CI_DEFAULT_BRANCH}" ]; then
-          # Run secrets scan only on default repo branch
-          echo "Run secrets scan"
+          echo "Run scan for default branch including secrets-scan"
           AIKIDO_CMD="${AIKIDO_CMD} --fail-on-secrets-scan"
+        else
+          echo "Run Scan with Aikido base-branch ${AIKIDO_BASE_BRANCH} in scan"
+          AIKIDO_CMD="${AIKIDO_CMD} --base-branch ${AIKIDO_BASE_BRANCH}"
         fi
+        
         echo "$AIKIDO_CMD"
         eval "$AIKIDO_CMD"
         
