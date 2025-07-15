@@ -25,7 +25,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.release>8</maven.compiler.release>
-    <bc.version>1.80</bc.version>
+    <bc.version>1.81</bc.version>
     <commons.cli.version>1.9.0</commons.cli.version>
     <commons.io.version>2.19.0</commons.io.version>
     <commons.text.version>1.13.1</commons.text.version>
