@@ -33,6 +33,7 @@
     <jackson.version>2.19.1</jackson.version>
     <jackson-yaml.version>2.19.1</jackson-yaml.version>
     <guava.version>33.4.8-jre</guava.version>
+    <commons-lang3.version>3.18.0</commons-lang3.version>
 
     <junit.version>4.13.2</junit.version>
     <sgtlstool.descriptor>${basedir}/src/main/assemblies/sgtlstool-standalone.xml</sgtlstool.descriptor>
@@ -72,6 +73,18 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
       <version>${commons.text.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3.version}</version>
+      <!-- Replacement for excluded commons-lang3 in commons-text -->
     </dependency>
 
     <dependency>
