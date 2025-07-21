@@ -31,7 +31,7 @@
     <commons.text.version>1.13.1</commons.text.version>
     <log4j.version>2.25.1</log4j.version>
     <jackson.version>2.19.2</jackson.version>
-    <jackson-yaml.version>2.19.1</jackson-yaml.version>
+    <jackson-yaml.version>2.19.2</jackson-yaml.version>
     <guava.version>33.4.8-jre</guava.version>
     <commons-lang3.version>3.18.0</commons-lang3.version>
 
