@@ -28,7 +28,7 @@
     <bc.version>1.81</bc.version>
     <commons.cli.version>1.10.0</commons.cli.version>
     <commons.io.version>2.20.0</commons.io.version>
-    <commons.text.version>1.13.1</commons.text.version>
+    <commons.text.version>1.14.0</commons.text.version>
     <log4j.version>2.25.1</log4j.version>
     <jackson.version>2.19.2</jackson.version>
     <jackson-yaml.version>2.19.2</jackson-yaml.version>
