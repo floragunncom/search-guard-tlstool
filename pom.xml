@@ -33,7 +33,7 @@
     <jackson.version>2.19.2</jackson.version>
     <jackson-yaml.version>2.19.2</jackson-yaml.version>
     <guava.version>33.5.0-jre</guava.version>
-    <commons-lang3.version>3.18.0</commons-lang3.version>
+    <commons-lang3.version>3.19.0</commons-lang3.version>
 
     <junit.version>4.13.2</junit.version>
     <sgtlstool.descriptor>${basedir}/src/main/assemblies/sgtlstool-standalone.xml</sgtlstool.descriptor>
