@@ -5,7 +5,7 @@ workflow:
     - when: always
 
 variables:
-  SG_BUILD_IMAGE: "floragunncom/ci-pipeline-focal-mvn38-java17:0.1.0"
+  SG_BUILD_IMAGE: "floragunncom/ubuntu-openjdk25:251125"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
   MAVEN_CLI_OPTS: "--batch-mode -s settings.xml -q -U"
   DOCKER_DRIVER: overlay2
