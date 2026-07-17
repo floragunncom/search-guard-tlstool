@@ -56,7 +56,7 @@ public class LoadCaTest {
 
 		Assert.assertEquals("DC=com,DC=example,O=Example Com\\, Inc.,OU=CA,CN=signing.ca.example.com",
 				ctx.getSigningCertificate().getSubject().toString());
-		Assert.assertEquals(1272483699, ctx.getSigningPrivateKey().hashCode());
+		Assert.assertEquals(1789305900, ctx.getSigningPrivateKey().hashCode());
 	}
 
 	@Test
@@ -76,7 +76,7 @@ public class LoadCaTest {
 
 		Assert.assertEquals("DC=com,DC=example,O=Example Com\\, Inc.,OU=CA,CN=root.ca.example.com",
 				ctx.getSigningCertificate().getSubject().toString());
-		Assert.assertEquals(-1135900547, ctx.getSigningPrivateKey().hashCode());
+		Assert.assertEquals(-1369834170, ctx.getSigningPrivateKey().hashCode());
 
 
 	}
@@ -102,6 +102,6 @@ public class LoadCaTest {
 
 		Assert.assertEquals("DC=com,DC=example,O=Example Com\\, Inc.,OU=CA,CN=signing.ca.example.com",
 				ctx.getSigningCertificate().getSubject().toString());
-		Assert.assertEquals(-1490461901, ctx.getSigningPrivateKey().hashCode());
+		Assert.assertEquals(-1917959806, ctx.getSigningPrivateKey().hashCode());
 	}
 }
