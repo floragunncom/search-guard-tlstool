@@ -5,7 +5,7 @@ workflow:
     - when: always
 
 variables:
-  SG_BUILD_IMAGE: "floragunncom/ubuntu-openjdk25:260723-193626"
+  SG_BUILD_IMAGE: "floragunncom/ubuntu-openjdk25:260908-041343"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
   MAVEN_CLI_OPTS: "--batch-mode -s settings.xml -q -U"
   DOCKER_TLS_CERTDIR: "/certs"
