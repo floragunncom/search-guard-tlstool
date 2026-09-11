@@ -42,6 +42,30 @@ public class EsNodeConfig {
     @JsonProperty("searchguard.ssl.transport.pemtrustedcas_filepath")
     private String transportPemTrustedCasFilePath;
 
+    @JsonProperty("searchguard.ssl.transport.server_pemcert_filepath")
+    private String transportServerPemCertFilePath;
+
+    @JsonProperty("searchguard.ssl.transport.server_pemkey_filepath")
+    private String transportServerPemKeyFilePath;
+
+    @JsonProperty("searchguard.ssl.transport.server_pemkey_password")
+    private String transportServerPemKeyPassword;
+
+    @JsonProperty("searchguard.ssl.transport.server_pemtrustedcas_filepath")
+    private String transportServerPemTrustedCasFilePath;
+
+    @JsonProperty("searchguard.ssl.transport.client_pemcert_filepath")
+    private String transportClientPemCertFilePath;
+
+    @JsonProperty("searchguard.ssl.transport.client_pemkey_filepath")
+    private String transportClientPemKeyFilePath;
+
+    @JsonProperty("searchguard.ssl.transport.client_pemkey_password")
+    private String transportClientPemKeyPassword;
+
+    @JsonProperty("searchguard.ssl.transport.client_pemtrustedcas_filepath")
+    private String transportClientPemTrustedCasFilePath;
+
     @JsonProperty("searchguard.ssl.transport.enforce_hostname_verification")
     private boolean transportEnforceHostnameVerification = false;
 
@@ -117,6 +141,70 @@ public class EsNodeConfig {
 
     public void setTransportPemTrustedCasFilePath(String transportPemTrustedCasFilePath) {
         this.transportPemTrustedCasFilePath = transportPemTrustedCasFilePath;
+    }
+
+    public String getTransportServerPemCertFilePath() {
+        return transportServerPemCertFilePath;
+    }
+
+    public void setTransportServerPemCertFilePath(String transportServerPemCertFilePath) {
+        this.transportServerPemCertFilePath = transportServerPemCertFilePath;
+    }
+
+    public String getTransportServerPemKeyFilePath() {
+        return transportServerPemKeyFilePath;
+    }
+
+    public void setTransportServerPemKeyFilePath(String transportServerPemKeyFilePath) {
+        this.transportServerPemKeyFilePath = transportServerPemKeyFilePath;
+    }
+
+    public String getTransportServerPemKeyPassword() {
+        return transportServerPemKeyPassword;
+    }
+
+    public void setTransportServerPemKeyPassword(String transportServerPemKeyPassword) {
+        this.transportServerPemKeyPassword = transportServerPemKeyPassword;
+    }
+
+    public String getTransportServerPemTrustedCasFilePath() {
+        return transportServerPemTrustedCasFilePath;
+    }
+
+    public void setTransportServerPemTrustedCasFilePath(String transportServerPemTrustedCasFilePath) {
+        this.transportServerPemTrustedCasFilePath = transportServerPemTrustedCasFilePath;
+    }
+
+    public String getTransportClientPemCertFilePath() {
+        return transportClientPemCertFilePath;
+    }
+
+    public void setTransportClientPemCertFilePath(String transportClientPemCertFilePath) {
+        this.transportClientPemCertFilePath = transportClientPemCertFilePath;
+    }
+
+    public String getTransportClientPemKeyFilePath() {
+        return transportClientPemKeyFilePath;
+    }
+
+    public void setTransportClientPemKeyFilePath(String transportClientPemKeyFilePath) {
+        this.transportClientPemKeyFilePath = transportClientPemKeyFilePath;
+    }
+
+    public String getTransportClientPemKeyPassword() {
+        return transportClientPemKeyPassword;
+    }
+
+    public void setTransportClientPemKeyPassword(String transportClientPemKeyPassword) {
+        this.transportClientPemKeyPassword = transportClientPemKeyPassword;
+    }
+
+    public String getTransportClientPemTrustedCasFilePath() {
+        return transportClientPemTrustedCasFilePath;
+    }
+
+    public void setTransportClientPemTrustedCasFilePath(String transportClientPemTrustedCasFilePath) {
+        this.transportClientPemTrustedCasFilePath = transportClientPemTrustedCasFilePath;
     }
 
     public boolean isTransportEnforceHostnameVerification() {

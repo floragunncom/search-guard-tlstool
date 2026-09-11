@@ -62,7 +62,7 @@ Flow lives in `SearchGuardTlsTool.run()`:
 
 ### Config semantics worth knowing
 
-Password fields accept `auto` (random password, written into the generated config snippet / `client-certificates.readme`), `none` (unencrypted key), or a literal string. The `ca.intermediate` section is optional — if absent, the root CA signs certificates directly. `defaults.nodesDn` may contain wildcards and `//`-delimited regexes to recognize legitimate nodes.
+Password fields accept `auto` (random password, written into the generated config snippet / `client-certificates.readme`), `none` (unencrypted key), or a literal string. The `ca.intermediate` section is optional — if absent, the root CA signs certificates directly. `defaults.nodesDn` may contain wildcards and `//`-delimited regexes to recognize legitimate nodes. `defaults.splitEku: true` generates two transport certificates per node — `<node>_server.*` (EKU serverAuth) and `<node>_client.*` (EKU clientAuth) — emits the `searchguard.ssl.transport.server_*`/`client_*` snippet settings instead of the shared `pem*` ones, makes the HTTP certificate serverAuth-only, and lists both DNs in `nodes_dn`; the DNs default to the node `dn` with `-server`/`-client` inserted into the CN's first label unless `serverDn`/`clientDn` are set on the node.
 
 ## Tests
 

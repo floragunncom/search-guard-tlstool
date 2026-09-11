@@ -17,6 +17,8 @@
 
 package com.floragunn.searchguard.tools.tlstool.tasks;
 
+import java.util.List;
+
 import com.floragunn.searchguard.tools.tlstool.Config;
 import com.floragunn.searchguard.tools.tlstool.Context;
 import com.floragunn.searchguard.tools.tlstool.ToolException;
@@ -30,6 +32,45 @@ public class Validate extends Task {
 	@Override
 	public void run() throws ToolException {
 		validateAdminCert();
+		validateSplitEku();
+	}
+
+	private void validateSplitEku() throws ToolException {
+		Config.Defaults defaults = ctx.getConfig().getDefaults();
+		List<Config.Node> nodes = ctx.getConfig().getNodes();
+
+		if (defaults == null || nodes == null) {
+			return;
+		}
+
+		for (Config.Node node : nodes) {
+			String nodeName = node.getName() != null ? node.getName() : String.valueOf(node.getDn());
+
+			if (!defaults.isSplitEku()) {
+				if (node.getServerDn() != null || node.getClientDn() != null) {
+					throw new ToolException("serverDn or clientDn is specified for node " + nodeName
+							+ ", but defaults.splitEku is not enabled. Please set splitEku: true or remove these settings.");
+				}
+
+				continue;
+			}
+
+			String serverDn;
+			String clientDn;
+
+			try {
+				serverDn = sanitizeDn(node.resolveServerDn(), "node server");
+				clientDn = sanitizeDn(node.resolveClientDn(), "node client");
+			} catch (IllegalArgumentException e) {
+				throw new ToolException("Cannot determine server and client DN for node " + nodeName + ": " + e.getMessage()
+						+ ". Please specify serverDn and clientDn for this node.", e);
+			}
+
+			if (serverDn.equalsIgnoreCase(clientDn)) {
+				throw new ToolException("The server DN and the client DN of node " + nodeName
+						+ " must differ when splitEku is enabled: " + serverDn);
+			}
+		}
 	}
 
 	private void validateAdminCert() throws ToolException {

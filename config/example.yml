@@ -90,6 +90,17 @@ defaults:
       
       # reuseTransportCertificatesForHttp: false
       
+      # Set this to true to create two transport certificates per node instead of one:
+      # <name>_server.pem with EKU serverAuth only and <name>_client.pem with EKU clientAuth only.
+      # The generated elasticsearch.yml snippet then uses the role-specific
+      # searchguard.ssl.transport.server_* and client_* settings, the HTTP certificate gets
+      # EKU serverAuth only, and both certificate DNs are listed in searchguard.nodes_dn.
+      # The DNs are derived from the node dn by rewriting the CN (node1.example.com becomes
+      # node1-server.example.com and node1-client.example.com) unless serverDn / clientDn
+      # are specified for the node.
+      
+      # splitEku: false
+      
       # Set this to true to enable hostname verification
       #verifyHostnames: false
       

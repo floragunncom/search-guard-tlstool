@@ -40,6 +40,8 @@ public abstract class CreateNodeCertificateBase extends Task {
 	private Config.Node nodeConfig;
 	protected final EsNodeConfig nodeResultConfig = new EsNodeConfig();
 	protected File privateKeyFile;
+	protected File serverPrivateKeyFile;
+	protected File clientPrivateKeyFile;
 	protected File configSnippetFile;
 	protected File httpPrivateKeyFile;
 
@@ -69,6 +71,26 @@ public abstract class CreateNodeCertificateBase extends Task {
 		}
 
 		return subjectAlternativeNameList.toArray(new ASN1Encodable[subjectAlternativeNameList.size()]);
+	}
+
+	protected boolean isSplitEku() {
+		return ctx.getConfig().getDefaults().isSplitEku();
+	}
+
+	protected String resolveServerDn(Config.Node node) throws ToolException {
+		try {
+			return node.resolveServerDn();
+		} catch (IllegalArgumentException e) {
+			throw new ToolException("Cannot determine server DN for node " + getNodeFileName(node) + ": " + e.getMessage(), e);
+		}
+	}
+
+	protected String resolveClientDn(Config.Node node) throws ToolException {
+		try {
+			return node.resolveClientDn();
+		} catch (IllegalArgumentException e) {
+			throw new ToolException("Cannot determine client DN for node " + getNodeFileName(node) + ": " + e.getMessage(), e);
+		}
 	}
 
 	protected String getNodeFileName(Config.Node node) {
@@ -144,7 +166,14 @@ public abstract class CreateNodeCertificateBase extends Task {
 		List<String> result = new ArrayList<>(ctx.getConfig().getNodes().size());
 
 		for (Config.Node node : ctx.getConfig().getNodes()) {
-			if (node.getDn() != null) {
+			if (isSplitEku()) {
+				if (node.getDn() == null && node.getServerDn() == null && node.getClientDn() == null) {
+					continue;
+				}
+
+				result.add(sanitizeDn(resolveServerDn(node), "node server"));
+				result.add(sanitizeDn(resolveClientDn(node), "node client"));
+			} else if (node.getDn() != null) {
 				result.add(sanitizeDn(node.getDn(), "node"));
 			}
 		}

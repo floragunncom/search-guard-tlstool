@@ -177,6 +177,23 @@ public class SearchGuardTlsDiagnosis {
         return result;
     }
 
+    private void addPemCertValidation(File configFile, String certFilePath, String trustedCasFilePath,
+            Set<TrustAnchor> fallbackTrustAnchors, Set<File> allCaFiles) throws ToolException {
+        if (certFilePath == null) {
+            return;
+        }
+
+        Set<TrustAnchor> trustAnchors = fallbackTrustAnchors;
+
+        if (trustedCasFilePath != null) {
+            File pemFile = new File(configFile.getParentFile(), trustedCasFilePath);
+            trustAnchors = loadTrustAnchors(Collections.singleton(pemFile));
+            allCaFiles.add(pemFile);
+        }
+
+        tasks.add(new ValidateCert(trustAnchors, new File(configFile.getParentFile(), certFilePath)));
+    }
+
     private void processEsConfigFile(File file) throws ToolException {
         try {
             log.info("Reading node config file " + file);
@@ -213,6 +230,11 @@ public class SearchGuardTlsDiagnosis {
                 tasks.add(new ValidateCert(httpTrustAnchors,
                         new File(file.getParentFile(), esNodeConfig.getHttpPemCertFilePath())));
             }
+
+            addPemCertValidation(file, esNodeConfig.getTransportServerPemCertFilePath(),
+                    esNodeConfig.getTransportServerPemTrustedCasFilePath(), transportTrustAnchors, allCaFiles);
+            addPemCertValidation(file, esNodeConfig.getTransportClientPemCertFilePath(),
+                    esNodeConfig.getTransportClientPemTrustedCasFilePath(), transportTrustAnchors, allCaFiles);
 
             for (File caFile : allCaFiles) {
                 tasks.add(new DumpCert(caFile));

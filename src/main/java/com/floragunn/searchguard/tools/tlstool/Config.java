@@ -18,6 +18,15 @@
 package com.floragunn.searchguard.tools.tlstool;
 
 import java.util.List;
+import java.util.Locale;
+
+import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.IETFUtils;
+import org.bouncycastle.asn1.x500.style.RFC4519Style;
+
+import com.google.common.base.Strings;
 
 public class Config {
 	
@@ -119,6 +128,7 @@ public class Config {
 		private int generatedPasswordLength = 12;
 		private boolean httpsEnabled;
 		private boolean reuseTransportCertificatesForHttp;
+		private boolean splitEku;
 		private boolean verifyHostnames;
 		private boolean resolveHostnames;
 		private boolean useEllipticCurves;
@@ -176,6 +186,12 @@ public class Config {
 		}
 		public void setReuseTransportCertificatesForHttp(boolean reuseTransportCertificatesForHttp) {
 			this.reuseTransportCertificatesForHttp = reuseTransportCertificatesForHttp;
+		}
+		public boolean isSplitEku() {
+			return splitEku;
+		}
+		public void setSplitEku(boolean splitEku) {
+			this.splitEku = splitEku;
 		}
 		public boolean isVerifyHostnames() {
 			return verifyHostnames;
@@ -330,6 +346,8 @@ public class Config {
 	public static class Node implements KeyGenParameters {
 		private String name;
 		private String dn;
+		private String serverDn;
+		private String clientDn;
 		private List<String> dns;
 		private List<String> ip;
 		private List<String> oid;
@@ -351,6 +369,81 @@ public class Config {
 		}
 		public void setDn(String dn) {
 			this.dn = dn;
+		}
+		public String getServerDn() {
+			return serverDn;
+		}
+		public void setServerDn(String serverDn) {
+			this.serverDn = serverDn;
+		}
+		public String getClientDn() {
+			return clientDn;
+		}
+		public void setClientDn(String clientDn) {
+			this.clientDn = clientDn;
+		}
+		public String resolveServerDn() {
+			return serverDn != null ? serverDn : deriveDn(dn, "-server");
+		}
+		public String resolveClientDn() {
+			return clientDn != null ? clientDn : deriveDn(dn, "-client");
+		}
+		static String deriveDn(String dn, String suffix) {
+			if (Strings.isNullOrEmpty(dn)) {
+				throw new IllegalArgumentException("No DN specified");
+			}
+
+			RDN[] rdns = new X500Name(RFC4519Style.INSTANCE, dn).getRDNs();
+			boolean cnFound = false;
+
+			for (int i = 0; i < rdns.length; i++) {
+				AttributeTypeAndValue[] atvs = rdns[i].getTypesAndValues();
+
+				for (int j = 0; j < atvs.length; j++) {
+					if (RFC4519Style.cn.equals(atvs[j].getType())) {
+						String cn = atvs[j].getValue().toString();
+						int dot = cn.indexOf('.');
+						String newCn = dot < 0 ? cn + suffix : cn.substring(0, dot) + suffix + cn.substring(dot);
+						atvs[j] = new AttributeTypeAndValue(RFC4519Style.cn,
+								RFC4519Style.INSTANCE.stringToValue(RFC4519Style.cn, newCn));
+						cnFound = true;
+					}
+				}
+
+				rdns[i] = atvs.length == 1 ? new RDN(atvs[0]) : new RDN(atvs);
+			}
+
+			if (!cnFound) {
+				throw new IllegalArgumentException("DN does not contain a CN: " + dn);
+			}
+
+			return toDnString(rdns);
+		}
+
+		// RFC4519Style parses into reverse (ASN.1) order and prints attribute types in lower case;
+		// print in string order with upper-case types so the result matches how users write DNs
+		private static String toDnString(RDN[] rdns) {
+			StringBuilder result = new StringBuilder();
+
+			for (int i = rdns.length - 1; i >= 0; i--) {
+				if (result.length() > 0) {
+					result.append(',');
+				}
+
+				AttributeTypeAndValue[] atvs = rdns[i].getTypesAndValues();
+
+				for (int j = 0; j < atvs.length; j++) {
+					if (j > 0) {
+						result.append('+');
+					}
+
+					String attributeName = RFC4519Style.INSTANCE.oidToDisplayName(atvs[j].getType());
+					result.append(attributeName != null ? attributeName.toUpperCase(Locale.ROOT) : atvs[j].getType().getId());
+					result.append('=').append(IETFUtils.valueToString(atvs[j].getValue()));
+				}
+			}
+
+			return result.toString();
 		}
 		public List<String> getDns() {
 			return dns;
